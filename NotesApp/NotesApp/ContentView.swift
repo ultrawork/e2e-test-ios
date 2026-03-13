@@ -10,6 +10,13 @@ struct ContentView: View {
                 Text("Welcome to the Notes App")
                     .font(.body)
                     .foregroundColor(.secondary)
+
+                NavigationLink {
+                    NoteEditView()
+                } label: {
+                    Label(NSLocalizedString("note_title_placeholder", comment: ""), systemImage: "square.and.pencil")
+                }
+                .accessibilityLabel(NSLocalizedString("note_title_placeholder", comment: ""))
             }
             .padding()
             .navigationTitle("Notes")
