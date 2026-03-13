@@ -8,33 +8,125 @@
 		13B07FE11A68108700A75B9A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8A3C6F2E2BA4D71900F8E1C3 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		8A3C6F302BA4D73100F8E1C3 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* NotesApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NotesApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FE21A68108700A75B9A /* NotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FE01A68108700A75B9A; };
+		13B07FE31A68108700A75B9A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FE11A68108700A75B9A; };
 		8A3C6F2F2BA4D71900F8E1C3 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3C6F2E2BA4D71900F8E1C3; };
 		8A3C6F312BA4D73100F8E1C3 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8A3C6F302BA4D73100F8E1C3; };
 		13B07FAE1A68108700A75B9A /* NotesApp */ = {isa = PBXGroup; children = (13B07FE01A68108700A75B9A, 13B07FE11A68108700A75B9A, 8A3C6F2E2BA4D71900F8E1C3, 8A3C6F302BA4D73100F8E1C3); path = NotesApp; sourceTree = "<group>"; };
-		83CBB9F61A601CBA00E9B192 = {isa = PBXGroup; children = (13B07FAE1A68108700A75B9A); sourceTree = "<group>"; };
+		83CBB9F61A601CBA00E9B192 = {isa = PBXGroup; children = (13B07FAE1A68108700A75B9A, 13B07F951A680F5B00A75B9A); sourceTree = "<group>"; };
+		13B07F951A680F5B00A75B9A /* Products */ = {isa = PBXGroup; children = (13B07F961A680F5B00A75B9A); name = Products; sourceTree = "<group>"; };
 		13B07F861A680F5B00A75B9A /* NotesApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A;
 			buildPhases = (13B07F871A680F5B00A75B9A, 13B07F8C1A680F5B00A75B9A);
 			name = NotesApp;
 			productName = NotesApp;
+			productReference = 13B07F961A680F5B00A75B9A;
 			productType = "com.apple.product-type.application";
 		};
-		13B07F871A680F5B00A75B9A /* Sources */ = {isa = PBXSourcesBuildPhase; files = (8A3C6F2F2BA4D71900F8E1C3); };
+		13B07F871A680F5B00A75B9A /* Sources */ = {isa = PBXSourcesBuildPhase; files = (13B07FE21A68108700A75B9A, 13B07FE31A68108700A75B9A, 8A3C6F2F2BA4D71900F8E1C3); };
 		13B07F8C1A680F5B00A75B9A /* Resources */ = {isa = PBXResourcesBuildPhase; files = (8A3C6F312BA4D73100F8E1C3); };
+		13B07F941A680F5B00A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultrawork.NotesApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		13B07F951A680F5B00A75B9B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultrawork.NotesApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		13B07F931A680F5B00A75B9A /* Build configuration list */ = {
 			isa = XCConfigurationList;
-			buildConfigurations = ();
+			buildConfigurations = (13B07F941A680F5B00A75B9A, 13B07F951A680F5B00A75B9B);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		83CBB9FB1A601CBA00E9B192 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		83CBB9FC1A601CBA00E9B193 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (83CBB9FB1A601CBA00E9B192, 83CBB9FC1A601CBA00E9B193);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192;
 			mainGroup = 83CBB9F61A601CBA00E9B192;
+			productRefGroup = 13B07F951A680F5B00A75B9A;
 			targets = (13B07F861A680F5B00A75B9A);
-		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = ();
 		};
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192;
