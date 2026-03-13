@@ -7,6 +7,8 @@
 		A1B2C3D81E68108700A75B9A /* CreatedDateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D41E68108700A75B9A; };
 		A1B2C3D91E68108700A75B9A /* NoteEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D51E68108700A75B9A; };
 		A1B2C3DA1E68108700A75B9A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D71E68108700A75B9A; };
+		13B07FE21A68108700A75B9A /* NotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FE01A68108700A75B9A; };
+		13B07FE31A68108700A75B9A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FE11A68108700A75B9A; };
 		13B07FE01A68108700A75B9A /* NotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesApp.swift; sourceTree = "<group>"; };
 		13B07FE11A68108700A75B9A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A1B2C3D41E68108700A75B9A /* CreatedDateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatedDateView.swift; sourceTree = "<group>"; };
@@ -18,25 +20,113 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A;
 			buildPhases = (13B07F871A680F5B00A75B9A, 13B07F8C1A680F5B00A75B9A);
+			buildRules = ();
+			dependencies = ();
 			name = NotesApp;
 			productName = NotesApp;
 			productType = "com.apple.product-type.application";
 		};
-		13B07F871A680F5B00A75B9A /* Sources */ = {isa = PBXSourcesBuildPhase; files = (A1B2C3D81E68108700A75B9A, A1B2C3D91E68108700A75B9A); };
-		13B07F8C1A680F5B00A75B9A /* Resources */ = {isa = PBXResourcesBuildPhase; files = (A1B2C3DA1E68108700A75B9A); };
+		13B07F871A680F5B00A75B9A /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (13B07FE21A68108700A75B9A, 13B07FE31A68108700A75B9A, A1B2C3D81E68108700A75B9A, A1B2C3D91E68108700A75B9A); runOnlyForDeploymentPostprocessing = 0; };
+		13B07F8C1A680F5B00A75B9A /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A1B2C3DA1E68108700A75B9A); runOnlyForDeploymentPostprocessing = 0; };
+		13B07F941A680F5B00A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultrawork.NotesApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		13B07F951A680F5B00A75B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultrawork.NotesApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		83CBBA041A601CBA00E9B192 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		83CBBA051A601CBA00E9B192 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		13B07F931A680F5B00A75B9A /* Build configuration list */ = {
 			isa = XCConfigurationList;
-			buildConfigurations = ();
+			buildConfigurations = (13B07F941A680F5B00A75B9A, 13B07F951A680F5B00A75B9A);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			targets = (13B07F861A680F5B00A75B9A);
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list */ = {
 			isa = XCConfigurationList;
-			buildConfigurations = ();
+			buildConfigurations = (83CBBA041A601CBA00E9B192, 83CBBA051A601CBA00E9B192);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192;
