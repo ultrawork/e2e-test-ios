@@ -1,0 +1,9 @@
+/* Created date */
+"created_date_accessibility" = "Created on %@";
+
+/* Note edit screen */
+"note_title_placeholder" = "Title";
+"note_title_accessibility" = "Note title";
+"note_content_accessibility" = "Note content";
+"new_note_title" = "New Note";
+"edit_note_title" = "Edit Note";
