@@ -1,64 +1,126 @@
 build:
-  maxIssues: 0
-
-style:
-  MagicNumber:
-    active: true
-    ignoreHashCodeFunction: true
-    ignorePropertyDeclaration: true
-    ignoreAnnotation: true
-    ignoreCompanionObjectPropertyDeclaration: true
-    ignoreEnums: true
-    ignoreNumbers:
-      - '-1'
-      - '0'
-      - '1'
-      - '2'
-  MaxLineLength:
-    active: true
-    maxLineLength: 120
-  WildcardImport:
-    active: false
-  ReturnCount:
-    active: true
-    max: 3
-  UnusedPrivateMember:
-    active: true
-    allowedNames: '(_|ignored|expected|serialVersionUID)'
-  ForbiddenComment:
-    active: false
+  maxIssues: 10
+  weights:
+    complexity: 2
+    LongParameterList: 1
+    style: 1
+    comments: 1
 
 complexity:
-  LongMethod:
-    active: true
-    threshold: 60
-  CyclomaticComplexMethod:
-    active: true
-    threshold: 15
-  TooManyFunctions:
-    active: true
-    thresholdInFiles: 15
-    thresholdInClasses: 15
-    thresholdInInterfaces: 15
-    thresholdInObjects: 15
-    thresholdInEnums: 15
+  active: true
   ComplexCondition:
     active: true
     threshold: 4
+  LongMethod:
+    active: true
+    threshold: 60
+  LongParameterList:
+    active: true
+    threshold: 6
+  NestedBlockDepth:
+    active: true
+    threshold: 4
+  TooManyFunctions:
+    active: true
+    threshold: 20
 
-naming:
-  FunctionNaming:
-    active: true
-    excludes:
-      - '**/ui/**'
-      - '**/theme/**'
-      - '**/navigation/**'
-  MatchingDeclarationName:
-    active: false
-  TopLevelPropertyNaming:
-    active: true
-    constantPattern: '[A-Z][A-Za-z0-9]*'
+coroutines:
+  active: true
 
 empty-blocks:
-  EmptyFunctionBlock:
+  active: true
+  EmptyCatchBlock:
+    active: true
+    allowedExceptionNameRegex: "^(_|(ignore|expected).*)"
+
+exceptions:
+  active: true
+
+formatting:
+  active: false
+  MaxLineLength:
+    active: true
+    maxLineLength: 160
+    excludeCommentStatements: false
+  NewLineAtEndOfFile:
+    active: true
+  TrailingWhitespace:
+    active: true
+
+naming:
+  active: true
+  ClassNaming:
+    active: true
+    classPattern: '[A-Z][a-zA-Z0-9]*'
+  FunctionNaming:
+    active: true
+    functionPattern: '^[a-z][a-zA-Z0-9]*$'
+  PackageNaming:
+    active: true
+    packagePattern: '^[a-z]+(\.[a-z][a-z0-9]*)*$'
+  VariableNaming:
+    active: true
+    variablePattern: '^[a-z][a-zA-Z0-9]*$'
+    privateVariablePattern: '^(_)?[a-z][a-zA-Z0-9]*$'
+    excludeClassPropertyPattern: '$^'
+    constantPattern: '^[A-Z][_A-Z0-9]*'
+
+performance:
+  active: true
+
+potential-bugs:
+  active: true
+  EqualsAlwaysReturnsTrueOrFalse:
+    active: true
+  ExplicitGarbageCollectionCall:
+    active: true
+  InvalidRange:
+    active: true
+  IteratorHasNextCallsNextMethod:
+    active: true
+  IteratorNotThrowingNoSuchElementException:
+    active: true
+  UnreachableCode:
+    active: true
+  UnconditionalJumpStatementInLoop:
+    active: true
+  UnnecessarySafeCall:
+    active: true
+  UnusedPrivateMember:
+    active: true
+  WrongEqualsTypeParameter:
+    active: true
+
+style:
+  active: true
+  ForbiddenComment:
+    active: true
+    values: 'TODO:,FIXME:,STOPSHIP:'
+  MagicNumber:
+    active: true
+    ignoreNumbers: '-1,0,1,2,100'
+    ignoreHashCodeFunction: true
+    ignorePropertyDeclaration: false
+    ignoreConstantDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotation: false
+    ignoreNamedArgument: true
+    ignoreEnums: true
+    ignoreRanges: false
+  ReturnCount:
+    active: true
+    max: 5
+    excludedFunctions: 'equals'
+  ThrowsCount:
+    active: true
+    max: 2
+  WildcardImport:
+    active: true
+    excludeImports: 'java.util.*,kotlinx.android.synthetic.*'
+
+comments:
+  active: true
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicFunction:
     active: false
