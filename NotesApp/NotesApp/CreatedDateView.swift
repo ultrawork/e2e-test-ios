@@ -24,6 +24,7 @@ struct CreatedDateView: View {
         Text(formattedDate)
             .font(.caption)
             .foregroundColor(.gray)
+            .accessibilityIdentifier("created_date_text")
             .accessibilityLabel(
                 String(
                     format: NSLocalizedString("created_date_accessibility", comment: ""),

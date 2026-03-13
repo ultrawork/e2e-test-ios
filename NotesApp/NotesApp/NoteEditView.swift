@@ -21,6 +21,7 @@ struct NoteEditView: View {
             .font(.title2)
             .fontWeight(.bold)
             .textFieldStyle(.plain)
+            .accessibilityIdentifier("note_title_field")
             .accessibilityLabel(NSLocalizedString("note_title_accessibility", comment: ""))
 
             CreatedDateView(createdAt: note?.createdAt)
@@ -29,6 +30,7 @@ struct NoteEditView: View {
             TextEditor(text: $content)
                 .font(.body)
                 .padding(.top, 12)
+                .accessibilityIdentifier("note_content_field")
                 .accessibilityLabel(NSLocalizedString("note_content_accessibility", comment: ""))
         }
         .padding()
