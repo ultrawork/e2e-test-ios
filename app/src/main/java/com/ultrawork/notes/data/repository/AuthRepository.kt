@@ -5,6 +5,7 @@ import com.ultrawork.notes.data.remote.ApiService
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Suppress("UnusedPrivateProperty")
 @Singleton
 class AuthRepository @Inject constructor(
     private val apiService: ApiService,

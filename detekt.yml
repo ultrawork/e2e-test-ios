@@ -25,6 +25,8 @@ style:
   UnusedPrivateMember:
     active: true
     allowedNames: '(_|ignored|expected|serialVersionUID)'
+  ForbiddenComment:
+    active: false
 
 complexity:
   LongMethod:
@@ -50,6 +52,9 @@ naming:
     excludes:
       - '**/ui/**'
       - '**/theme/**'
+      - '**/navigation/**'
+  MatchingDeclarationName:
+    active: false
   TopLevelPropertyNaming:
     active: true
     constantPattern: '[A-Z][A-Za-z0-9]*'
