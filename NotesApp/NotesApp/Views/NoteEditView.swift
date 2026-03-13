@@ -16,6 +16,7 @@ struct NoteEditView: View {
                 text: $title
             )
             .font(.title2)
+            .accessibilityIdentifier("note_title_field")
             .accessibilityLabel(NSLocalizedString("note_title_placeholder", comment: ""))
 
             TextEditor(text: $content)
@@ -24,6 +25,7 @@ struct NoteEditView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                 )
+                .accessibilityIdentifier("note_content_editor")
                 .accessibilityLabel(NSLocalizedString("note_content_placeholder", comment: ""))
 
             CharacterCounter(count: content.count)
@@ -37,6 +39,7 @@ struct NoteEditView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(NSLocalizedString("save", comment: "")) {}
+                    .accessibilityIdentifier("save_button")
                     .accessibilityLabel(NSLocalizedString("save", comment: ""))
             }
         }

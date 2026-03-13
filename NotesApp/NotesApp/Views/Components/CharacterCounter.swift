@@ -7,6 +7,7 @@ struct CharacterCounter: View {
         Text(String(format: NSLocalizedString("character_count", comment: ""), count))
             .font(.caption)
             .foregroundColor(.gray)
+            .accessibilityIdentifier("character_counter")
             .accessibilityLabel(String(format: NSLocalizedString("character_count", comment: ""), count))
     }
 }

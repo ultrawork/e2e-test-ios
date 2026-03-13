@@ -16,6 +16,7 @@ struct ContentView: View {
                 } label: {
                     Label(NSLocalizedString("note_title_placeholder", comment: ""), systemImage: "square.and.pencil")
                 }
+                .accessibilityIdentifier("create_note_button")
                 .accessibilityLabel(NSLocalizedString("note_title_placeholder", comment: ""))
             }
             .padding()
