@@ -1,13 +1,11 @@
 package com.ultrawork.notes.di
 
-import android.content.Context
 import com.ultrawork.notes.BuildConfig
 import com.ultrawork.notes.data.remote.ApiService
 import com.ultrawork.notes.data.remote.AuthInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
