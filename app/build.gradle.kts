@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
+    jacoco
 }
 
 android {
@@ -45,6 +46,61 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+}
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    val fileFilter = listOf(
+        "**/R.class", "**/R$*.class", "**/BuildConfig.*",
+        "**/Manifest*.*", "**/*Test*.*", "**/Hilt_*.*",
+        "**/*_Factory.*", "**/*_MembersInjector.*",
+        "**/*Module_*.*", "**/*Dagger*.*", "**/*_Impl*.*"
+    )
+
+    val debugTree = fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
+        exclude(fileFilter)
+    }
+
+    classDirectories.setFrom(debugTree)
+    sourceDirectories.setFrom("${projectDir}/src/main/java")
+    executionData.setFrom(
+        fileTree(layout.buildDirectory) { include("jacoco/testDebugUnitTest.exec") }
+    )
+}
+
+tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+    dependsOn("jacocoTestReport")
+
+    val fileFilter = listOf(
+        "**/R.class", "**/R$*.class", "**/BuildConfig.*",
+        "**/Manifest*.*", "**/*Test*.*", "**/Hilt_*.*",
+        "**/*_Factory.*", "**/*_MembersInjector.*",
+        "**/*Module_*.*", "**/*Dagger*.*", "**/*_Impl*.*"
+    )
+
+    val debugTree = fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
+        exclude(fileFilter)
+    }
+
+    classDirectories.setFrom(debugTree)
+    sourceDirectories.setFrom("${projectDir}/src/main/java")
+    executionData.setFrom(
+        fileTree(layout.buildDirectory) { include("jacoco/testDebugUnitTest.exec") }
+    )
+
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.0".toBigDecimal()
+            }
+        }
     }
 }
 
