@@ -20,26 +20,123 @@
 			buildPhases = (13B07F871A680F5B00A75B9A, 13B07F8C1A680F5B00A75B9A);
 			name = NotesApp;
 			productName = NotesApp;
+			productReference = 13B07F961A680F5B00A75B9A;
 			productType = "com.apple.product-type.application";
 		};
+		13B07F961A680F5B00A75B9A /* NotesApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NotesApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D41000000000000020 /* CharacterCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D41000000000000001; };
 		A1B2C3D41000000000000021 /* NoteEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D41000000000000002; };
 		A1B2C3D41000000000000022 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D41000000000000003; };
-		13B07F871A680F5B00A75B9A /* Sources */ = {isa = PBXSourcesBuildPhase; files = (A1B2C3D41000000000000020, A1B2C3D41000000000000021); };
+		13B07FEF1A68108700A75B9A /* NotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FE01A68108700A75B9A; };
+		13B07FF01A68108700A75B9A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FE11A68108700A75B9A; };
+		13B07F871A680F5B00A75B9A /* Sources */ = {isa = PBXSourcesBuildPhase; files = (13B07FEF1A68108700A75B9A, 13B07FF01A68108700A75B9A, A1B2C3D41000000000000020, A1B2C3D41000000000000021); };
 		13B07F8C1A680F5B00A75B9A /* Resources */ = {isa = PBXResourcesBuildPhase; files = (A1B2C3D41000000000000022); };
-		13B07F931A680F5B00A75B9A /* Build configuration list */ = {
+
+/* Begin XCBuildConfiguration section */
+		13B07F941A680F5B00A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = NotesApp/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultrawork.notes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				GENERATE_INFOPLIST_FILE = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0;
+			};
+			name = Debug;
+		};
+		13B07F951A680F5B00A75B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = NotesApp/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultrawork.notes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				GENERATE_INFOPLIST_FILE = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0;
+			};
+			name = Release;
+		};
+		83CBB9FB1A601CBA00E9B192 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		83CBB9FC1A601CBA00E9B192 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "NotesApp" */ = {
 			isa = XCConfigurationList;
-			buildConfigurations = ();
+			buildConfigurations = (
+				13B07F941A680F5B00A75B9A /* Debug */,
+				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192;
 			mainGroup = 83CBB9F61A601CBA00E9B192;
+			productRefGroup = 83CBB9F61A601CBA00E9B192;
 			targets = (13B07F861A680F5B00A75B9A);
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "NotesApp" */ = {
 			isa = XCConfigurationList;
-			buildConfigurations = ();
+			buildConfigurations = (
+				83CBB9FB1A601CBA00E9B192 /* Debug */,
+				83CBB9FC1A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192;
