@@ -1,3 +1,3 @@
-# e2e-test-ios
+# Notes App — iOS (SwiftUI)
 
-Бизнес-анализ: Это полноценное приложение для заметок, которое будет использоваться реальными пользователями. Веб-версия + мобильные приложения (iOS и Android) + бекенд API.; Кроссплатформенная синхро
+Cross-platform notes application — iOS client built with SwiftUI.

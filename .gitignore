@@ -1,0 +1,12 @@
+*.xcuserdata
+build/
+DerivedData/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.moved-aside
+*.hmap
+.DS_Store
+Pods/

@@ -1,0 +1,37 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+		13B07FE01A68108700A75B9A /* NotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesApp.swift; sourceTree = "<group>"; };
+		13B07FE11A68108700A75B9A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		13B07FAE1A68108700A75B9A /* NotesApp */ = {isa = PBXGroup; children = (13B07FE01A68108700A75B9A, 13B07FE11A68108700A75B9A); path = NotesApp; sourceTree = "<group>"; };
+		83CBB9F61A601CBA00E9B192 = {isa = PBXGroup; children = (13B07FAE1A68108700A75B9A); sourceTree = "<group>"; };
+		13B07F861A680F5B00A75B9A /* NotesApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A;
+			buildPhases = (13B07F871A680F5B00A75B9A, 13B07F8C1A680F5B00A75B9A);
+			name = NotesApp;
+			productName = NotesApp;
+			productType = "com.apple.product-type.application";
+		};
+		13B07F871A680F5B00A75B9A /* Sources */ = {isa = PBXSourcesBuildPhase; files = (); };
+		13B07F8C1A680F5B00A75B9A /* Resources */ = {isa = PBXResourcesBuildPhase; files = (); };
+		13B07F931A680F5B00A75B9A /* Build configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = ();
+		};
+		83CBB9F71A601CBA00E9B192 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192;
+			mainGroup = 83CBB9F61A601CBA00E9B192;
+			targets = (13B07F861A680F5B00A75B9A);
+		};
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = ();
+		};
+	};
+	rootObject = 83CBB9F71A601CBA00E9B192;
+}
