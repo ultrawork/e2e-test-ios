@@ -6,7 +6,9 @@
 	objects = {
 		13B07FE01A68108700A75B9A /* NotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesApp.swift; sourceTree = "<group>"; };
 		13B07FE11A68108700A75B9A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		13B07FAE1A68108700A75B9A /* NotesApp */ = {isa = PBXGroup; children = (13B07FE01A68108700A75B9A, 13B07FE11A68108700A75B9A); path = NotesApp; sourceTree = "<group>"; };
+		AA1B2C3D0000000000000001 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
+		AA1B2C3D0000000000000002 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		13B07FAE1A68108700A75B9A /* NotesApp */ = {isa = PBXGroup; children = (13B07FE01A68108700A75B9A, 13B07FE11A68108700A75B9A, AA1B2C3D0000000000000001, AA1B2C3D0000000000000002); path = NotesApp; sourceTree = "<group>"; };
 		83CBB9F61A601CBA00E9B192 = {isa = PBXGroup; children = (13B07FAE1A68108700A75B9A); sourceTree = "<group>"; };
 		13B07F861A680F5B00A75B9A /* NotesApp */ = {
 			isa = PBXNativeTarget;
