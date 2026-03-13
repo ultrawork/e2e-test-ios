@@ -3,14 +3,21 @@ import SwiftUI
 struct CreatedDateView: View {
     let createdAt: Date?
 
+    @State private var fallbackDate = Date()
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "dd.MM.yyyy HH:mm"
+        return formatter
+    }()
+
     private var displayDate: Date {
-        createdAt ?? Date()
+        createdAt ?? fallbackDate
     }
 
     private var formattedDate: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yyyy HH:mm"
-        return formatter.string(from: displayDate)
+        Self.dateFormatter.string(from: displayDate)
     }
 
     var body: some View {
