@@ -5,11 +5,15 @@ struct ContentView: View {
     @State private var newNoteText = ""
     @State private var searchText = ""
 
+    private var trimmedSearch: String {
+        searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     var filteredNotes: [Note] {
-        if searchText.isEmpty {
+        if trimmedSearch.isEmpty {
             return viewModel.notes
         }
-        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(searchText) }
+        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(trimmedSearch) }
     }
 
     var body: some View {
@@ -17,17 +21,20 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 NotesCounterView(
                     totalCount: viewModel.notes.count,
-                    filteredCount: searchText.isEmpty ? nil : filteredNotes.count
+                    filteredCount: trimmedSearch.isEmpty ? nil : filteredNotes.count
                 )
                 .padding(.vertical, 8)
 
                 List {
                     ForEach(filteredNotes) { note in
                         Text(note.text)
-                    }
-                    .onDelete { indexSet in
-                        let idsToDelete = indexSet.map { filteredNotes[$0].id }
-                        viewModel.notes.removeAll { idsToDelete.contains($0.id) }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    viewModel.notes.removeAll { $0.id == note.id }
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
                     }
                 }
                 .listStyle(.plain)
