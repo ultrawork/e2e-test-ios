@@ -11,6 +11,7 @@ struct NotesCounterView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             .accessibilityLabel(counterText)
+            .accessibilityIdentifier("notes_counter_text")
     }
 
     private var counterText: String {

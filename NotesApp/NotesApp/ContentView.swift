@@ -19,6 +19,7 @@ struct ContentView: View {
                     }
                 }
                 .listStyle(.plain)
+                .accessibilityIdentifier("notes_list")
 
                 HStack {
                     TextField(NSLocalizedString("notes_new_note_placeholder", comment: "New note placeholder"), text: $newNoteText)
@@ -26,6 +27,7 @@ struct ContentView: View {
                         .accessibilityLabel(
                             NSLocalizedString("notes_new_note_field", comment: "New note text field")
                         )
+                        .accessibilityIdentifier("new_note_text_field")
 
                     Button {
                         guard !newNoteText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
@@ -38,6 +40,7 @@ struct ContentView: View {
                     .accessibilityLabel(
                         NSLocalizedString("notes_add_button", comment: "Add note button")
                     )
+                    .accessibilityIdentifier("add_note_button")
                 }
                 .padding()
             }
