@@ -75,7 +75,12 @@ final class SearchE2ETests: XCTestCase {
         XCTAssertTrue(clearButton.waitForExistence(timeout: 5))
         clearButton.tap()
 
-        search.typeText("ВАЖНАЯ ЗАМЕТКА")
+        // Re-tap search field after clearing to ensure it has focus
+        let searchAfterClear = searchField
+        XCTAssertTrue(searchAfterClear.waitForExistence(timeout: 5))
+        searchAfterClear.tap()
+        sleep(1)
+        searchAfterClear.typeText("ВАЖНАЯ ЗАМЕТКА")
 
         // Verify match found with uppercase
         assertCounterEquals("Найдено: 1 из 1")
