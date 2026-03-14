@@ -211,13 +211,16 @@ final class E2ETests: XCTestCase {
         XCTAssertTrue(clearButton.waitForExistence(timeout: 5))
         clearButton.tap()
 
-        // Cancel search to dismiss (handle different system locales)
-        let cancelButton = app.navigationBars.buttons.matching(
+        // Cancel search to fully dismiss the search overlay
+        let cancelButton = app.buttons.matching(
             NSPredicate(format: "label IN %@", ["Cancel", "Отмена", "Отменить"])
         ).firstMatch
-        if cancelButton.waitForExistence(timeout: 3) {
-            cancelButton.tap()
-        }
+        XCTAssertTrue(cancelButton.waitForExistence(timeout: 5), "Cancel button should exist to dismiss search")
+        cancelButton.tap()
+
+        // Wait for list to re-render after search dismissal
+        let counter = notesCounter
+        _ = counter.waitForExistence(timeout: 5)
 
         // Verify all notes shown again
         assertCounterEquals("Всего заметок: 2")
