@@ -3,19 +3,31 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = NotesViewModel()
     @State private var newNoteText = ""
+    @State private var searchText = ""
+
+    var filteredNotes: [Note] {
+        if searchText.isEmpty {
+            return viewModel.notes
+        }
+        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(searchText) }
+    }
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                NotesCounterView(totalCount: viewModel.notes.count)
-                    .padding(.vertical, 8)
+                NotesCounterView(
+                    totalCount: viewModel.notes.count,
+                    filteredCount: searchText.isEmpty ? nil : filteredNotes.count
+                )
+                .padding(.vertical, 8)
 
                 List {
-                    ForEach(viewModel.notes) { note in
+                    ForEach(filteredNotes) { note in
                         Text(note.text)
                     }
                     .onDelete { indexSet in
-                        viewModel.notes.remove(atOffsets: indexSet)
+                        let idsToDelete = indexSet.map { filteredNotes[$0].id }
+                        viewModel.notes.removeAll { idsToDelete.contains($0.id) }
                     }
                 }
                 .listStyle(.plain)
@@ -45,6 +57,10 @@ struct ContentView: View {
                 .padding()
             }
             .navigationTitle(NSLocalizedString("notes_navigation_title", comment: "Notes screen title"))
+            .searchable(
+                text: $searchText,
+                prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
+            )
         }
     }
 }
