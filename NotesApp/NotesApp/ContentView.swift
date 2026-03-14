@@ -38,6 +38,7 @@ struct ContentView: View {
                     }
                 }
                 .listStyle(.plain)
+                .scrollDismissesKeyboard(.interactively)
                 .accessibilityIdentifier("notes_list")
 
                 HStack {
