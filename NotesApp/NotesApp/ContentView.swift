@@ -1,14 +1,5 @@
 import SwiftUI
 
-struct Note: Identifiable {
-    let id = UUID()
-    let text: String
-}
-
-final class NotesViewModel: ObservableObject {
-    @Published var notes: [Note] = []
-}
-
 struct ContentView: View {
     @StateObject private var viewModel = NotesViewModel()
     @State private var newNoteText = ""
@@ -30,7 +21,7 @@ struct ContentView: View {
                 .listStyle(.plain)
 
                 HStack {
-                    TextField("New note", text: $newNoteText)
+                    TextField(NSLocalizedString("notes_new_note_placeholder", comment: "New note placeholder"), text: $newNoteText)
                         .textFieldStyle(.roundedBorder)
                         .accessibilityLabel(
                             NSLocalizedString("notes_new_note_field", comment: "New note text field")
@@ -50,7 +41,7 @@ struct ContentView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Notes")
+            .navigationTitle(NSLocalizedString("notes_navigation_title", comment: "Notes screen title"))
         }
     }
 }
