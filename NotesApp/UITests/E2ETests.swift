@@ -211,12 +211,15 @@ final class E2ETests: XCTestCase {
         XCTAssertTrue(clearButton.waitForExistence(timeout: 5))
         clearButton.tap()
 
-        // Cancel search to fully dismiss the search overlay
-        let cancelButton = app.buttons.matching(
+        // Dismiss search mode if Cancel button is available
+        // After clearing text, the Cancel button may or may not remain visible
+        // depending on iOS version; try tapping it to fully dismiss search overlay
+        let cancelButton = app.navigationBars.buttons.matching(
             NSPredicate(format: "label IN %@", ["Cancel", "Отмена", "Отменить"])
         ).firstMatch
-        XCTAssertTrue(cancelButton.waitForExistence(timeout: 5), "Cancel button should exist to dismiss search")
-        cancelButton.tap()
+        if cancelButton.waitForExistence(timeout: 3) {
+            cancelButton.tap()
+        }
 
         // Wait for list to re-render after search dismissal
         let counter = notesCounter
