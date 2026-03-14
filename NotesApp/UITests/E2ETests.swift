@@ -206,26 +206,42 @@ final class E2ETests: XCTestCase {
         // Verify filter applied
         assertCounterEquals("Найдено: 1 из 2")
 
-        // Clear search using the clear button
-        let clearButton = search.buttons["Clear text"]
-        XCTAssertTrue(clearButton.waitForExistence(timeout: 5))
-        clearButton.tap()
-
-        // Dismiss search mode if Cancel button is available
-        // After clearing text, the Cancel button may or may not remain visible
-        // depending on iOS version; try tapping it to fully dismiss search overlay
-        let cancelButton = app.navigationBars.buttons.matching(
-            NSPredicate(format: "label IN %@", ["Cancel", "Отмена", "Отменить"])
-        ).firstMatch
-        if cancelButton.waitForExistence(timeout: 3) {
-            cancelButton.tap()
+        // Clear search by selecting all text and deleting it
+        search.tap()
+        search.press(forDuration: 1.0)
+        let selectAll = app.menuItems["Select All"]
+        if selectAll.waitForExistence(timeout: 3) {
+            selectAll.tap()
+            search.typeText(String(XCUIKeyboardKey.delete.rawValue))
+        } else {
+            // Fallback: use the clear button inside the search field
+            let clearButton = search.buttons["Clear text"]
+            if clearButton.waitForExistence(timeout: 3) {
+                clearButton.tap()
+            }
         }
 
-        // Wait for list to re-render after search dismissal
-        let counter = notesCounter
-        _ = counter.waitForExistence(timeout: 5)
+        // Dismiss the search bar by tapping the Cancel button
+        // Try multiple possible labels for the Cancel button (depends on locale)
+        let cancelButton = app.buttons.matching(
+            NSPredicate(format: "label IN %@", ["Cancel", "Отмена", "Отменить"])
+        ).firstMatch
+        if cancelButton.waitForExistence(timeout: 5) {
+            cancelButton.tap()
+        } else {
+            // Fallback: tap on the navigation title area to dismiss search
+            let navBar = app.navigationBars.firstMatch
+            if navBar.waitForExistence(timeout: 3) {
+                navBar.tap()
+            }
+        }
+
+        // Wait for SwiftUI to re-render after search dismissal
+        sleep(2)
 
         // Verify all notes shown again
+        let counter = notesCounter
+        XCTAssertTrue(counter.waitForExistence(timeout: 5))
         assertCounterEquals("Всего заметок: 2")
 
         let list = notesList
