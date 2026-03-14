@@ -207,12 +207,14 @@ final class E2ETests: XCTestCase {
         assertCounterEquals("Найдено: 1 из 2")
 
         // Clear search using the clear button
-        let clearButton = search.buttons.firstMatch
+        let clearButton = search.buttons["Clear text"]
         XCTAssertTrue(clearButton.waitForExistence(timeout: 5))
         clearButton.tap()
 
-        // Cancel search to dismiss
-        let cancelButton = app.buttons["Cancel"]
+        // Cancel search to dismiss (handle different system locales)
+        let cancelButton = app.navigationBars.buttons.matching(
+            NSPredicate(format: "label IN %@", ["Cancel", "Отмена", "Отменить"])
+        ).firstMatch
         if cancelButton.waitForExistence(timeout: 3) {
             cancelButton.tap()
         }
