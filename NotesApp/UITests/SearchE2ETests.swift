@@ -70,17 +70,25 @@ final class SearchE2ETests: XCTestCase {
         let matchedNote = app.staticTexts["Важная Заметка"]
         XCTAssertTrue(matchedNote.waitForExistence(timeout: 5), "Note should be visible with lowercase search")
 
-        // Clear search and try uppercase
-        let clearButton = search.buttons["Clear text"]
-        XCTAssertTrue(clearButton.waitForExistence(timeout: 5))
-        clearButton.tap()
+        // Clear search text by selecting all and deleting, then type uppercase
+        search.tap()
+        search.press(forDuration: 1.0)
+        let selectAll = app.menuItems["Select All"]
+        if selectAll.waitForExistence(timeout: 3) {
+            selectAll.tap()
+            search.typeText(String(XCUIKeyboardKey.delete.rawValue))
+        } else {
+            // Fallback: delete characters one by one
+            let deleteString = String(repeating: XCUIKeyboardKey.delete.rawValue, count: 20)
+            search.typeText(deleteString)
+        }
 
-        // Re-tap search field after clearing to ensure it has focus
-        let searchAfterClear = searchField
-        XCTAssertTrue(searchAfterClear.waitForExistence(timeout: 5))
-        searchAfterClear.tap()
+        // Wait for search to clear and re-enter uppercase query
         sleep(1)
-        searchAfterClear.typeText("ВАЖНАЯ ЗАМЕТКА")
+        let searchForUppercase = searchField
+        XCTAssertTrue(searchForUppercase.waitForExistence(timeout: 5))
+        searchForUppercase.tap()
+        searchForUppercase.typeText("ВАЖНАЯ ЗАМЕТКА")
 
         // Verify match found with uppercase
         assertCounterEquals("Найдено: 1 из 1")
