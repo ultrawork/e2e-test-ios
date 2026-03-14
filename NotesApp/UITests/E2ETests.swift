@@ -32,6 +32,10 @@ final class E2ETests: XCTestCase {
         app.collectionViews["notes_list"]
     }
 
+    private var searchField: XCUIElement {
+        app.searchFields.firstMatch
+    }
+
     private func addNote(_ text: String) {
         let textField = newNoteTextField
         XCTAssertTrue(textField.waitForExistence(timeout: 5))
@@ -156,5 +160,116 @@ final class E2ETests: XCTestCase {
 
         // Counter should still be 0
         assertCounterEquals("Всего заметок: 0")
+    }
+
+    // MARK: - SC-005: Search filters notes by title
+
+    func testSC005_searchFiltersNotes() {
+        // Add notes
+        addNote("Покупки")
+        addNote("Работа")
+        addNote("Покупки на выходные")
+
+        // Verify all 3 notes present
+        assertCounterEquals("Всего заметок: 3")
+
+        // Tap search field and type
+        let search = searchField
+        XCTAssertTrue(search.waitForExistence(timeout: 5), "Search field should exist")
+        search.tap()
+        search.typeText("Покупки")
+
+        // Verify filtered counter
+        assertCounterEquals("Найдено: 2 из 3")
+
+        // Verify matching notes visible
+        let list = notesList
+        XCTAssertTrue(list.waitForExistence(timeout: 5))
+        XCTAssertEqual(list.cells.count, 2, "Only matching notes should be visible")
+    }
+
+    // MARK: - SC-006: Clear search shows all notes
+
+    func testSC006_clearSearchShowsAllNotes() {
+        // Add notes
+        addNote("Заметка A")
+        addNote("Заметка B")
+
+        assertCounterEquals("Всего заметок: 2")
+
+        // Search
+        let search = searchField
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap()
+        search.typeText("Заметка A")
+
+        // Verify filter applied
+        assertCounterEquals("Найдено: 1 из 2")
+
+        // Clear search by selecting all text and deleting it
+        search.tap()
+        search.press(forDuration: 1.0)
+        let selectAll = app.menuItems["Select All"]
+        if selectAll.waitForExistence(timeout: 3) {
+            selectAll.tap()
+            search.typeText(String(XCUIKeyboardKey.delete.rawValue))
+        } else {
+            // Fallback: use the clear button inside the search field
+            let clearButton = search.buttons["Clear text"]
+            if clearButton.waitForExistence(timeout: 3) {
+                clearButton.tap()
+            }
+        }
+
+        // Dismiss the search bar by tapping the Cancel button
+        // Try multiple possible labels for the Cancel button (depends on locale)
+        let cancelButton = app.buttons.matching(
+            NSPredicate(format: "label IN %@", ["Cancel", "Отмена", "Отменить"])
+        ).firstMatch
+        if cancelButton.waitForExistence(timeout: 5) {
+            cancelButton.tap()
+        } else {
+            // Fallback: tap on the navigation title area to dismiss search
+            let navBar = app.navigationBars.firstMatch
+            if navBar.waitForExistence(timeout: 3) {
+                navBar.tap()
+            }
+        }
+
+        // Wait for SwiftUI to re-render after search dismissal
+        sleep(2)
+
+        // Verify all notes shown again
+        let counter = notesCounter
+        XCTAssertTrue(counter.waitForExistence(timeout: 5))
+        assertCounterEquals("Всего заметок: 2")
+
+        let list = notesList
+        XCTAssertTrue(list.waitForExistence(timeout: 5))
+        XCTAssertEqual(list.cells.count, 2, "All notes should be visible after clearing search")
+    }
+
+    // MARK: - SC-007: Search with no results
+
+    func testSC007_searchNoResults() {
+        // Add notes
+        addNote("Молоко")
+        addNote("Хлеб")
+
+        assertCounterEquals("Всего заметок: 2")
+
+        // Search for non-existing text
+        let search = searchField
+        XCTAssertTrue(search.waitForExistence(timeout: 5), "Search field should exist")
+        search.tap()
+        search.typeText("Несуществующая")
+
+        // Verify filtered counter shows 0
+        assertCounterEquals("Найдено: 0 из 2")
+
+        // Verify list is empty
+        let list = notesList
+        XCTAssertTrue(list.waitForExistence(timeout: 5))
+        XCTAssertEqual(list.cells.count, 0, "No notes should be visible for non-matching search")
     }
 }

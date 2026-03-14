@@ -4,3 +4,4 @@
 "notes_new_note_placeholder" = "Новая заметка";
 "notes_add_button" = "Добавить заметку";
 "notes_navigation_title" = "Заметки";
+"search_notes_placeholder" = "Поиск заметок...";

@@ -3,22 +3,42 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = NotesViewModel()
     @State private var newNoteText = ""
+    @State private var searchText = ""
+
+    private var trimmedSearch: String {
+        searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    var filteredNotes: [Note] {
+        if trimmedSearch.isEmpty {
+            return viewModel.notes
+        }
+        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(trimmedSearch) }
+    }
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                NotesCounterView(totalCount: viewModel.notes.count)
-                    .padding(.vertical, 8)
+                NotesCounterView(
+                    totalCount: viewModel.notes.count,
+                    filteredCount: trimmedSearch.isEmpty ? nil : filteredNotes.count
+                )
+                .padding(.vertical, 8)
 
                 List {
-                    ForEach(viewModel.notes) { note in
+                    ForEach(filteredNotes) { note in
                         Text(note.text)
-                    }
-                    .onDelete { indexSet in
-                        viewModel.notes.remove(atOffsets: indexSet)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    viewModel.notes.removeAll { $0.id == note.id }
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
                     }
                 }
                 .listStyle(.plain)
+                .scrollDismissesKeyboard(.interactively)
                 .accessibilityIdentifier("notes_list")
 
                 HStack {
@@ -45,6 +65,10 @@ struct ContentView: View {
                 .padding()
             }
             .navigationTitle(NSLocalizedString("notes_navigation_title", comment: "Notes screen title"))
+            .searchable(
+                text: $searchText,
+                prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
+            )
         }
     }
 }
