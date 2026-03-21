@@ -10,6 +10,7 @@ struct CategoryManagerView: View {
     @State private var isPresentingCreate = false
     @State private var editingCategory: Category?
     @State private var categoryToDelete: Category?
+    @State private var deleteError: String?
 
     var body: some View {
         List {
@@ -76,12 +77,24 @@ struct CategoryManagerView: View {
                 guard let category = categoryToDelete else { return }
                 categoryToDelete = nil
                 Task {
-                    try? await onDelete(category)
+                    do {
+                        try await onDelete(category)
+                    } catch {
+                        deleteError = error.localizedDescription
+                    }
                 }
             }
             Button("Отмена", role: .cancel) {
                 categoryToDelete = nil
             }
+        }
+        .alert("Ошибка удаления", isPresented: Binding(
+            get: { deleteError != nil },
+            set: { if !$0 { deleteError = nil } }
+        )) {
+            Button("OK", role: .cancel) { deleteError = nil }
+        } message: {
+            Text(deleteError ?? "")
         }
     }
 }
@@ -130,8 +143,8 @@ private struct CategoryFormSheet: View {
                 Section {
                     TextField("Цвет (#RRGGBB или #RGB)", text: $formHex)
                         .accessibilityIdentifier("category_form_hex_field")
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
                         .onChange(of: formHex) {
                             hexError = Self.validateHex(formHex)
                         }
