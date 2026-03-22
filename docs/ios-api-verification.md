@@ -2,28 +2,72 @@
 
 ## Purpose
 
-This document describes how to manually verify real `APIService` calls from the iOS app to the backend without committing runtime code changes. It is intended as a QA runbook for validating the backend integration after the real networking layer is wired into the app.
+This document is a **manual verification template** for checking real iOS networking against `ultrawork/e2e-test-backend` **after** a real network layer is added to this iOS app.
+
+It is intentionally limited to what is verifiable from the current repositories:
+
+- the iOS repository currently contains **no** `APIService` type;
+- the iOS repository currently contains **no** `API_BASE_URL` configuration key in `Info.plist`;
+- the backend `.env.example` defines `API_BASE_URL=http://localhost:3000/api` for mobile clients;
+- the backend currently exposes `/health` and mounts `/api/auth` and `/api/notes` routes;
+- the backend repository currently contains **no** `/api/categories` routes;
+- `src/routes/notes.routes.ts` currently contains route comments only, without implemented handlers.
+
+Because of that, this document does **not** claim that category CRUD or note CRUD can be executed successfully against the current backend revision. Instead, it provides:
+
+1. a factual checklist for verifying the backend that exists today;
+2. `curl` examples that show the **currently reachable paths**;
+3. expected outcomes for the current repository state, including likely `404` responses for unimplemented note handlers;
+4. a future-state checklist to use once real iOS networking and backend handlers are implemented.
 
 ## Scope and current repository state
 
-- This is a documentation-only workflow.
-- In the current iOS repository state, `NotesApp/NotesApp/Info.plist` does **not** contain `API_BASE_URL`.
-- If the currently checked out iOS branch still uses mock data only, use this document as the verification checklist for the branch where `APIService` is actually connected.
-- If `API_BASE_URL` is missing or the real networking layer is not enabled, fall back to the existing mock behavior and do not commit local configuration changes in this PR.
+### iOS repository facts
+
+Verified in this repository:
+
+- `NotesApp/NotesApp/Info.plist` contains bundle metadata only.
+- There is no checked-in `API_BASE_URL` app setting.
+- There is no checked-in `APIService` implementation or obvious networking composition root to switch from mock to real backend.
+
+Implication:
+
+- any mention of enabling a real network layer in the app is a **future integration step**, not a currently available in-repo toggle.
+
+### Backend repository facts
+
+Verified in `ultrawork/e2e-test-backend`:
+
+- `.env.example` includes `API_BASE_URL=http://localhost:3000/api`;
+- `src/app.ts` defines `GET /health` and mounts `app.use("/api", router)`;
+- `src/routes/index.ts` mounts `/auth` and `/notes`;
+- `src/routes/notes.routes.ts` contains only commented route declarations;
+- no `/api/categories` router exists in the repository tree;
+- `prisma/schema.prisma` defines a `Note` model with a single enum field `category`, not a category relation array.
+
+Implication:
+
+- `/api/categories` must be treated as **not available** in the current backend;
+- note payloads should be described, when discussing schema shape, with a single `category` enum field such as `PERSONAL`, `WORK`, or `IDEAS`;
+- successful live CRUD verification for notes/categories is blocked until backend handlers are implemented.
 
 ## Prerequisites
 
-1. Start the backend from `ultrawork/e2e-test-backend`.
-2. Ensure the backend is reachable on port `3000`.
+1. Clone and start `ultrawork/e2e-test-backend`.
+2. Ensure the backend listens on port `3000`.
 3. Use the backend `.env.example` value for mobile clients:
-   - `API_BASE_URL=http://localhost:3000/api`
-4. Confirm backend health before testing:
+
+```text
+API_BASE_URL=http://localhost:3000/api
+```
+
+4. Confirm the backend process is reachable:
 
 ```bash
 curl -i http://localhost:3000/health
 ```
 
-Expected response:
+Expected response from the current backend:
 
 ```http
 HTTP/1.1 200 OK
@@ -34,70 +78,66 @@ Content-Type: application/json; charset=utf-8
 
 ## API_BASE_URL configuration
 
-### Recommended local value
+### Confirmed backend value
 
-For local development and simulator-based checks, use:
+The backend repository documents this mobile base URL:
 
 ```text
 http://localhost:3000/api
 ```
 
-### iOS Simulator vs physical device
+### Simulator vs physical device
 
-- **iOS Simulator**: `http://localhost:3000/api` usually works because the simulator can access services running on the host Mac.
-- **Physical device**: `localhost` points to the device itself, not your Mac. Use your Mac's LAN IP instead, for example:
+- **iOS Simulator**: `http://localhost:3000/api` can reach services on the host Mac.
+- **Physical device**: replace `localhost` with the Mac LAN IP, for example:
 
 ```text
 http://192.168.1.50:3000/api
 ```
 
-### Current Info.plist state
+### Current iOS app state
 
-The current `NotesApp/NotesApp/Info.plist` only contains bundle metadata and does **not** define `API_BASE_URL`.
+The current iOS repository does **not** define `API_BASE_URL` in `NotesApp/NotesApp/Info.plist`.
 
-### Fallback when API_BASE_URL is absent
+### Fallback when the app has no runtime API configuration
 
-If no `API_BASE_URL` is configured, or the app is still wired to mocks:
+If you are testing this repository exactly as checked in:
 
-- keep using the mock implementation for normal local development;
-- use the `curl` commands in this document to verify the backend independently;
-- apply `Info.plist` changes only locally for manual testing, without committing them in this PR.
+- keep using the app as-is for UI-only/mock-only checks;
+- verify backend reachability separately with `curl`;
+- if you temporarily add local configuration for experimentation, keep it uncommitted.
 
 ## How to enable the real network layer locally
 
-Use the following checks without committing code changes:
+This section is a **future-state checklist**. It does not describe a configuration that already exists in this repository.
+
+Use it only on a local branch where networking has been added.
 
 1. Open `NotesApp/NotesApp.xcodeproj` in Xcode.
-2. Inspect `NotesApp/NotesApp/Info.plist` and verify whether a custom `API_BASE_URL` key exists locally.
-3. If your local integration branch supports reading `API_BASE_URL`, add it locally with one of these values:
+2. Check whether your local experimental branch added support for reading `API_BASE_URL`.
+3. If such support exists locally, set one of these values:
    - simulator: `http://localhost:3000/api`
    - device: `http://<YOUR_MAC_IP>:3000/api`
-4. Verify the app composition root / dependency wiring uses `APIService` instead of a mock service.
-5. Run the app from Xcode.
-6. Watch the Xcode debug console for request URLs, HTTP methods, status codes, decoding errors, and transport failures.
-7. If calls still never leave the app, the build is still using a mock service or fallback path.
+4. Check whether your local branch introduced a real networking service in place of mock/local data.
+5. Run the app and inspect logs for outgoing requests.
 
-### Where to look in Xcode
-
-- **Debug console**: `View` → `Debug Area` → `Activate Console`
-- **Runtime logs**: Xcode app console during simulator/device execution
-- **Breakpoints**: add temporary breakpoints where `APIService` is instantiated or where requests are built, if needed for local diagnosis
+If the repository remains in its current state, there is no in-repo switch to perform these steps, so backend verification is limited to direct `curl` checks.
 
 ## ATS and local HTTP testing
 
-Because the recommended local backend URL uses `http://`, App Transport Security may block requests depending on local configuration.
+The documented local backend URL uses `http://`, so App Transport Security can block requests from a native iOS app.
 
-Current repository state:
+Current repository fact:
 
-- `Info.plist` does not show any `NSAppTransportSecurity` exceptions.
+- `Info.plist` does not contain visible ATS exceptions.
 
-For local manual verification only, one of the following must be true:
+For manual local experiments only, one of the following is required:
 
-- you test against an HTTPS backend endpoint; or
-- you apply a local-only ATS exception in `Info.plist` and do not commit it in this PR; or
-- you keep the app on the mock/fallback path and validate the backend separately with `curl`.
+- use HTTPS if your backend exposes it;
+- add a local-only ATS exception and do not commit it in this documentation PR;
+- or test the backend separately with `curl` while the app remains on mock/local behavior.
 
-## API requests to verify manually
+## Current backend checks you can run today
 
 Set a shell variable first:
 
@@ -105,114 +145,84 @@ Set a shell variable first:
 export API_BASE_URL=http://localhost:3000/api
 ```
 
-If you test on a physical device, keep the app configured with your Mac IP, but `curl` can still use localhost when executed on the Mac itself.
+## Health check
 
-## Categories endpoints
+```bash
+curl -i http://localhost:3000/health
+```
 
-> Note: the backend repository currently exposes `/api/notes` in code and documents `User`, `Note`, and `Category` entities in the schema/requirements. The examples below follow the intended backend contract for manual verification of the iOS integration.
+Expected today:
 
-### GET /api/categories
+- `200 OK`
+- body `{"status":"ok"}`
+
+## Categories endpoint status
+
+`/api/categories` is **not present** in the current backend repository.
+
+Verification command:
 
 ```bash
 curl -i "$API_BASE_URL/categories"
 ```
 
-Expected status:
+Expected today:
 
-```text
-200 OK
+- route is unavailable;
+- typical Express result is `404 Not Found`.
+
+Example response shape:
+
+```http
+HTTP/1.1 404 Not Found
 ```
 
-Example response:
+Use this result as confirmation that category endpoints are not yet implemented, not as a test failure in this documentation PR.
 
-```json
-[
-  {
-    "id": "cat-001",
-    "name": "Work",
-    "color": "#3366FF",
-    "createdAt": "2026-03-20T10:00:00.000Z"
-  },
-  {
-    "id": "cat-002",
-    "name": "Ideas",
-    "color": "#FF9900",
-    "createdAt": "2026-03-20T10:05:00.000Z"
-  }
-]
-```
+## Notes endpoint status
 
-### POST /api/categories
+The backend mounts `/api/notes`, but `src/routes/notes.routes.ts` currently exports an empty router with comments only.
+
+Verification command:
 
 ```bash
-curl -i -X POST "$API_BASE_URL/categories" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "QA Category",
-    "color": "#1A2B3C"
-  }'
+curl -i "$API_BASE_URL/notes"
 ```
 
-Expected status:
+Expected today:
 
-```text
-201 Created
+- the path is mounted, but no handler is implemented;
+- typical Express result is `404 Not Found`.
+
+Example response shape:
+
+```http
+HTTP/1.1 404 Not Found
 ```
 
-Example response:
+## Notes contract notes from Prisma schema
+
+When backend note handlers are eventually implemented, the Prisma schema indicates that a note uses a **single enum** field:
 
 ```json
 {
-  "id": "cat-qa-001",
-  "name": "QA Category",
-  "color": "#1A2B3C",
-  "createdAt": "2026-03-20T11:00:00.000Z"
+  "title": "Manual API test",
+  "content": "Created during verification.",
+  "category": "WORK"
 }
 ```
 
-### PUT /api/categories/:id
+Enum values currently defined in `prisma/schema.prisma`:
 
-```bash
-curl -i -X PUT "$API_BASE_URL/categories/cat-qa-001" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "QA Category Updated",
-    "color": "#4D8EFF"
-  }'
-```
+- `PERSONAL`
+- `WORK`
+- `IDEAS`
 
-Expected status:
+This is the only backend data shape that can be documented from the current repository state. Do not use `categories: []` arrays or `/api/notes?category=<ID>` examples for current manual verification.
 
-```text
-200 OK
-```
+## Future-state request examples
 
-Example response:
-
-```json
-{
-  "id": "cat-qa-001",
-  "name": "QA Category Updated",
-  "color": "#4D8EFF",
-  "createdAt": "2026-03-20T11:00:00.000Z"
-}
-```
-
-### DELETE /api/categories/:id
-
-```bash
-curl -i -X DELETE "$API_BASE_URL/categories/cat-qa-001"
-```
-
-Expected status:
-
-```text
-204 No Content
-```
-
-Expected response body: empty.
-
-## Notes endpoints
+The following examples are **templates for a future backend revision** where note handlers exist. They are not guaranteed to succeed against the current backend checkout.
 
 ### GET /api/notes
 
@@ -220,13 +230,12 @@ Expected response body: empty.
 curl -i "$API_BASE_URL/notes"
 ```
 
-Expected status:
+Target success criteria after backend implementation:
 
-```text
-200 OK
-```
+- `200 OK`
+- JSON array of notes
 
-Example response:
+Possible future response shape aligned with the Prisma schema:
 
 ```json
 [
@@ -234,13 +243,7 @@ Example response:
     "id": "note-001",
     "title": "Sprint checklist",
     "content": "Validate backend integration from iOS.",
-    "categories": [
-      {
-        "id": "cat-001",
-        "name": "Work",
-        "color": "#3366FF"
-      }
-    ],
+    "category": "WORK",
     "createdAt": "2026-03-20T12:00:00.000Z",
     "updatedAt": "2026-03-20T12:00:00.000Z"
   }
@@ -255,34 +258,14 @@ curl -i -X POST "$API_BASE_URL/notes" \
   -d '{
     "title": "Manual API test",
     "content": "Created from curl during iOS verification.",
-    "categories": ["cat-001"]
+    "category": "WORK"
   }'
 ```
 
-Expected status:
+Target success criteria after backend implementation:
 
-```text
-201 Created
-```
-
-Example response:
-
-```json
-{
-  "id": "note-qa-001",
-  "title": "Manual API test",
-  "content": "Created from curl during iOS verification.",
-  "categories": [
-    {
-      "id": "cat-001",
-      "name": "Work",
-      "color": "#3366FF"
-    }
-  ],
-  "createdAt": "2026-03-20T12:30:00.000Z",
-  "updatedAt": "2026-03-20T12:30:00.000Z"
-}
-```
+- `201 Created`
+- response contains created note with single `category` enum field
 
 ### PUT /api/notes/:id
 
@@ -292,39 +275,14 @@ curl -i -X PUT "$API_BASE_URL/notes/note-qa-001" \
   -d '{
     "title": "Manual API test updated",
     "content": "Updated from curl during iOS verification.",
-    "categories": ["cat-001", "cat-002"]
+    "category": "IDEAS"
   }'
 ```
 
-Expected status:
+Target success criteria after backend implementation:
 
-```text
-200 OK
-```
-
-Example response:
-
-```json
-{
-  "id": "note-qa-001",
-  "title": "Manual API test updated",
-  "content": "Updated from curl during iOS verification.",
-  "categories": [
-    {
-      "id": "cat-001",
-      "name": "Work",
-      "color": "#3366FF"
-    },
-    {
-      "id": "cat-002",
-      "name": "Ideas",
-      "color": "#FF9900"
-    }
-  ],
-  "createdAt": "2026-03-20T12:30:00.000Z",
-  "updatedAt": "2026-03-20T12:45:00.000Z"
-}
-```
+- `200 OK`
+- response reflects updated scalar `category`
 
 ### DELETE /api/notes/:id
 
@@ -332,87 +290,32 @@ Example response:
 curl -i -X DELETE "$API_BASE_URL/notes/note-qa-001"
 ```
 
-Expected status:
+Target success criteria after backend implementation:
 
-```text
-204 No Content
-```
+- `204 No Content`
 
-Expected response body: empty.
+### Filtering notes by category
 
-### GET /api/notes?category=<ID>
-
-This is the backend query form for the user scenario “select notes by `categoryId`”.
+The product requirement mentions selecting notes by category. The current backend schema suggests this should map to a scalar enum filter, for example a future query shape such as:
 
 ```bash
-curl -i "$API_BASE_URL/notes?category=cat-001"
+curl -i "$API_BASE_URL/notes?category=WORK"
 ```
 
-Expected status:
+This query form is documented here as a **candidate verification example**, not as a confirmed live endpoint in the current backend codebase.
 
-```text
-200 OK
-```
-
-Example response:
-
-```json
-[
-  {
-    "id": "note-001",
-    "title": "Sprint checklist",
-    "content": "Validate backend integration from iOS.",
-    "categories": [
-      {
-        "id": "cat-001",
-        "name": "Work",
-        "color": "#3366FF"
-      }
-    ],
-    "createdAt": "2026-03-20T12:00:00.000Z",
-    "updatedAt": "2026-03-20T12:00:00.000Z"
-  }
-]
-```
-
-## Expected response models
-
-### Category
-
-Example JSON shape:
-
-```json
-{
-  "id": "cat-001",
-  "name": "Work",
-  "color": "#3366FF",
-  "createdAt": "2026-03-20T10:00:00.000Z"
-}
-```
-
-Fields:
-
-- `id`: backend identifier
-- `name`: display name
-- `color`: hex color in `#RRGGBB` format
-- `createdAt`: optional creation timestamp if returned by backend
+## Expected models for future note handlers
 
 ### Note
 
-Example JSON shape:
+Future response shape should stay consistent with the Prisma schema unless backend implementation intentionally diverges:
 
 ```json
 {
   "id": "note-001",
   "title": "Sprint checklist",
   "content": "Validate backend integration from iOS.",
-  "categories": [
-    {
-      "id": "cat-001",
-      "name": "Work",
-      "color": "#3366FF"
-    }
-  ],
+  "category": "WORK",
   "createdAt": "2026-03-20T12:00:00.000Z",
   "updatedAt": "2026-03-20T12:05:00.000Z"
 }
@@ -423,170 +326,115 @@ Fields:
 - `id`
 - `title`
 - `content`
-- `categories`
+- `category` — single enum value, not an array
 - `createdAt`
 - `updatedAt`
 
+No current backend evidence supports a separate category entity response model for `/api/categories`.
+
 ## Manual verification scenarios
 
-## 1. Create category
+## Scenario A — verify current backend availability
 
 Preparation:
 
-- backend is running;
-- app is configured to use real `APIService`;
-- no existing category named `QA Category`.
+- backend is running.
 
 Action:
 
-- create a category in the UI, or execute `POST /api/categories` from this document.
+- call `/health`.
 
-Expected result:
+Expected result today:
 
-- API returns `201 Created`;
-- Xcode logs show a request to `/api/categories`;
-- the new category appears in the UI category list;
-- `GET /api/categories` returns the newly created category.
+- `200 OK`;
+- body contains `{"status":"ok"}`.
 
-## 2. Update category
+## Scenario B — verify categories are not implemented yet
+
+Action:
+
+- call `GET /api/categories` with `curl`.
+
+Expected result today:
+
+- `404 Not Found` or equivalent route-not-found response.
+
+Interpretation:
+
+- this confirms the current backend has no category endpoints.
+
+## Scenario C — verify notes handlers are not implemented yet
+
+Action:
+
+- call `GET /api/notes` with `curl`.
+
+Expected result today:
+
+- `404 Not Found` or equivalent route-not-found response.
+
+Interpretation:
+
+- router mount exists, but handlers are still absent.
+
+## Scenario D — future note create/update/delete verification
+
+Use this scenario only after backend note handlers and an iOS network layer are implemented.
 
 Preparation:
 
-- a test category already exists.
+- app branch includes a real networking service;
+- runtime base URL is configurable;
+- backend implements note CRUD.
 
 Action:
 
-- rename the category and change its color in the UI, or call `PUT /api/categories/:id`.
+- create a note with `category` set to one enum value such as `WORK`;
+- update it to another enum value such as `IDEAS`;
+- delete it;
+- optionally query notes filtered by `category=WORK` if backend implementation supports that form.
 
-Expected result:
+Expected future result:
 
-- API returns `200 OK`;
-- Xcode logs show a `PUT` request with the target ID;
-- UI shows the new name/color;
-- `GET /api/categories` reflects the updated values.
-
-## 3. Delete category
-
-Preparation:
-
-- a removable test category exists and is not required by another active check.
-
-Action:
-
-- delete the category in the UI, or call `DELETE /api/categories/:id`.
-
-Expected result:
-
-- API returns `204 No Content`;
-- Xcode logs show the delete request and status code;
-- the category disappears from the UI;
-- `GET /api/categories` no longer includes the deleted ID.
-
-## 4. Create note
-
-Preparation:
-
-- at least one category exists, for example `cat-001`.
-
-Action:
-
-- create a note in the UI and assign the category, or call `POST /api/notes`.
-
-Expected result:
-
-- API returns `201 Created`;
-- Xcode logs show a `POST /api/notes` request;
-- UI displays the new note;
-- `GET /api/notes` returns the note with its category data.
-
-## 5. Update note
-
-Preparation:
-
-- a test note already exists.
-
-Action:
-
-- edit title/content/categories in the UI, or call `PUT /api/notes/:id`.
-
-Expected result:
-
-- API returns `200 OK`;
-- Xcode logs show the updated payload and response;
-- UI refreshes with the new values;
-- `GET /api/notes` returns the updated note.
-
-## 6. Filter notes by category
-
-Preparation:
-
-- at least one note is linked to `cat-001`.
-
-Action:
-
-- trigger the category filter in the UI, or call `GET /api/notes?category=cat-001`.
-
-Expected result:
-
-- API returns `200 OK`;
-- only notes belonging to the selected category are shown in the filtered UI state;
-- Xcode logs show the query string `?category=cat-001`;
-- direct `curl` verification returns matching notes only.
-
-## 7. Delete note
-
-Preparation:
-
-- a removable test note exists.
-
-Action:
-
-- delete the note in the UI, or call `DELETE /api/notes/:id`.
-
-Expected result:
-
-- API returns `204 No Content`;
-- Xcode logs show the delete request;
-- the note disappears from the list;
-- `GET /api/notes` no longer returns the deleted note.
+- create returns `201`;
+- update returns `200`;
+- delete returns `204`;
+- all request/response bodies use a single `category` field.
 
 ## Example logs
 
-### Successful request log
+### Current-state backend verification logs
 
 ```text
-[APIService] Request: GET http://localhost:3000/api/categories
-[APIService] Response: 200 OK
-[APIService] Body: [{"id":"cat-001","name":"Work","color":"#3366FF"}]
+$ curl -i http://localhost:3000/health
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{"status":"ok"}
 ```
 
 ```text
-[APIService] Request: POST http://localhost:3000/api/notes
-[APIService] Body: {"title":"Manual API test","content":"Created from curl during iOS verification.","categories":["cat-001"]}
-[APIService] Response: 201 Created
-[APIService] Body: {"id":"note-qa-001","title":"Manual API test","content":"Created from curl during iOS verification.","categories":[{"id":"cat-001","name":"Work","color":"#3366FF"}],"createdAt":"2026-03-20T12:30:00.000Z","updatedAt":"2026-03-20T12:30:00.000Z"}
-```
-
-### Typical error logs
-
-```text
-[APIService] Request: POST http://localhost:3000/api/categories
-[APIService] Response: 400 Bad Request
-[APIService] Body: {"message":"Validation failed: color must match #RRGGBB"}
+$ curl -i http://localhost:3000/api/categories
+HTTP/1.1 404 Not Found
 ```
 
 ```text
-[APIService] Request: PUT http://localhost:3000/api/notes/missing-id
-[APIService] Response: 404 Not Found
-[APIService] Body: {"message":"Note not found"}
+$ curl -i http://localhost:3000/api/notes
+HTTP/1.1 404 Not Found
+```
+
+### Future iOS debug log examples
+
+These are illustrative examples for a later branch that introduces real networking:
+
+```text
+[Network] Request: GET http://localhost:3000/api/notes
+[Network] Response: 200 OK
+[Network] Body: [{"id":"note-001","title":"Sprint checklist","content":"Validate backend integration from iOS.","category":"WORK"}]
 ```
 
 ```text
-[APIService] Request failed: NSURLErrorDomain Code=-1004 "Could not connect to the server."
-```
-
-```text
-[APIService] Decoding error: keyNotFound(CodingKeys(stringValue: "title", intValue: nil), ...)
+[Network] Request failed: NSURLErrorDomain Code=-1004 "Could not connect to the server."
 ```
 
 ## Common issues and diagnostics
@@ -596,86 +444,88 @@ Expected result:
 Symptoms:
 
 - requests go to the wrong host or wrong path;
-- 404 on every endpoint;
-- transport errors in the console.
+- `404` on valid paths;
+- transport errors in app logs.
 
 Checks:
 
-- confirm the app uses `/api` in the base URL;
-- confirm simulator uses `localhost`, but devices use your Mac IP;
-- print the resolved base URL in debug logs if needed.
+- confirm `/api` is included in the base URL;
+- confirm simulator uses `localhost`, but physical device uses the Mac IP;
+- confirm the app branch actually supports runtime API configuration.
 
 ### Backend unavailable
 
 Symptoms:
 
-- `NSURLErrorDomain` connection failures;
-- `curl http://localhost:3000/health` fails.
+- `curl http://localhost:3000/health` fails;
+- app-side transport errors such as `NSURLErrorDomain`.
 
 Checks:
 
-- ensure backend process or Docker container is running;
+- ensure backend process or container is running;
 - confirm port `3000` is exposed;
-- retry health check before opening the iOS app.
+- retry `/health` before app testing.
 
 ### ATS blocking HTTP
 
 Symptoms:
 
-- request fails immediately on device/simulator even though `curl` works on the Mac.
+- app request fails immediately even though `curl` on the Mac works.
 
 Checks:
 
-- inspect local `Info.plist` ATS settings;
-- use HTTPS if available;
-- add a local-only ATS exception for manual testing if required.
+- inspect local ATS settings;
+- use HTTPS or a local-only ATS exception.
 
 ### CORS
 
-For a native iOS app, classic browser CORS restrictions usually do not apply in the same way. However, the topic can still appear during debugging through web tooling or proxies.
+For a normal native iOS app using `URLSession`, browser-style CORS restrictions are **not usually relevant**.
 
-Checks:
-
-- backend currently enables CORS via `app.use(cors())`;
-- if a proxy or alternate environment is involved, confirm the backend still returns the needed headers.
+This matters only if you are debugging through browser-based tooling, a web view, or an intermediate web client.
 
 ### 4xx errors
 
-Typical cases:
+Possible causes once handlers are implemented:
 
-- `400 Bad Request`: invalid payload, invalid color format, missing required fields;
-- `404 Not Found`: wrong ID, deleted entity, wrong route.
+- invalid payload;
+- unsupported enum value in `category`;
+- missing route or missing record.
 
 Checks:
 
-- compare payload with the JSON examples in this document;
-- confirm IDs were created in the same backend environment;
-- repeat `GET` requests to verify current server state.
+- compare payloads with the Prisma-backed shape in this document;
+- verify whether the backend revision you are testing actually implements the route.
 
 ### 5xx errors
 
-Typical cases:
+Possible causes:
 
 - server exception;
 - database unavailable;
-- migration/schema mismatch.
+- Prisma migration mismatch.
 
 Checks:
 
 - inspect backend logs;
 - verify database connectivity;
-- rerun backend migrations/setup if needed.
+- rerun backend setup and migrations.
 
 ## Manual checklist
 
+### Current repository state
+
 - [ ] Backend is running and `/health` returns `200`
-- [ ] Local `API_BASE_URL` is set correctly for simulator or device
-- [ ] Real `APIService` is enabled instead of a mock service
-- [ ] `GET /api/categories` returns `200`
-- [ ] Category create/update/delete scenarios are verified
-- [ ] `GET /api/notes` returns `200`
-- [ ] Note create/update/delete scenarios are verified
-- [ ] `GET /api/notes?category=<ID>` is verified for category filtering
-- [ ] Xcode console shows real network activity
-- [ ] Negative cases for wrong URL, 4xx, 5xx, and backend unavailability are understood
-- [ ] Any local `Info.plist` or ATS change remains uncommitted
+- [ ] Confirmed backend `.env.example` documents `API_BASE_URL=http://localhost:3000/api`
+- [ ] Confirmed iOS `Info.plist` does not define `API_BASE_URL`
+- [ ] Confirmed iOS repository does not currently expose a checked-in `APIService` switch
+- [ ] `GET /api/categories` returns route-not-found, matching current backend state
+- [ ] `GET /api/notes` returns route-not-found, matching current backend state
+- [ ] ATS considerations are understood for any future native HTTP test
+
+### Future integration branch
+
+- [ ] Real iOS networking is wired in locally
+- [ ] Runtime base URL is configurable
+- [ ] `GET /api/notes` succeeds
+- [ ] Note create/update/delete succeeds with scalar `category`
+- [ ] Category-related verification is attempted only if backend category endpoints are actually implemented
