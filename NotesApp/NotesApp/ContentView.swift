@@ -1,19 +1,27 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var viewModel = NotesViewModel()
+    @StateObject private var viewModel: NotesViewModel
     @State private var newNoteText = ""
     @State private var searchText = ""
+
+    init(apiService: APIServiceProtocol = APIService.shared) {
+        _viewModel = StateObject(wrappedValue: NotesViewModel(apiService: apiService))
+    }
 
     private var trimmedSearch: String {
         searchText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     var filteredNotes: [Note] {
-        if trimmedSearch.isEmpty {
-            return viewModel.notes
+        var result = viewModel.notes
+        if viewModel.showFavoritesOnly {
+            result = result.filter { $0.isFavorited }
         }
-        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(trimmedSearch) }
+        if !trimmedSearch.isEmpty {
+            result = result.filter { $0.title.localizedCaseInsensitiveContains(trimmedSearch) }
+        }
+        return result
     }
 
     var body: some View {
@@ -21,20 +29,36 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 NotesCounterView(
                     totalCount: viewModel.notes.count,
-                    filteredCount: trimmedSearch.isEmpty ? nil : filteredNotes.count
+                    filteredCount: (trimmedSearch.isEmpty && !viewModel.showFavoritesOnly) ? nil : filteredNotes.count
                 )
                 .padding(.vertical, 8)
 
+                if viewModel.isLoading {
+                    ProgressView()
+                        .padding()
+                }
+
                 List {
                     ForEach(filteredNotes) { note in
-                        Text(note.text)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    viewModel.notes.removeAll { $0.id == note.id }
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
+                        HStack {
+                            Text(note.title)
+                            Spacer()
+                            Button {
+                                viewModel.toggleFavorite(note: note)
+                            } label: {
+                                Image(systemName: note.isFavorited ? "star.fill" : "star")
+                                    .foregroundColor(note.isFavorited ? .yellow : .gray)
                             }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("favorite_button_\(note.id)")
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                Task { await viewModel.deleteNote(id: note.id) }
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
                 }
                 .listStyle(.plain)
@@ -51,8 +75,9 @@ struct ContentView: View {
 
                     Button {
                         guard !newNoteText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                        viewModel.notes.append(Note(text: newNoteText))
+                        let title = newNoteText
                         newNoteText = ""
+                        Task { await viewModel.addNote(title: title) }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
@@ -69,10 +94,29 @@ struct ContentView: View {
                 text: $searchText,
                 prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
             )
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.showFavoritesOnly.toggle()
+                    } label: {
+                        Image(systemName: viewModel.showFavoritesOnly ? "star.fill" : "star")
+                            .foregroundColor(viewModel.showFavoritesOnly ? .yellow : .primary)
+                    }
+                    .accessibilityLabel(
+                        viewModel.showFavoritesOnly
+                            ? NSLocalizedString("notes_show_all", comment: "Show all notes")
+                            : NSLocalizedString("notes_favorites_filter", comment: "Show favorites only")
+                    )
+                    .accessibilityIdentifier("favorites_filter_button")
+                }
+            }
+            .task {
+                await viewModel.loadNotes()
+            }
         }
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(apiService: MockAPIService())
 }

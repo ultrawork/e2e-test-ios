@@ -7,6 +7,7 @@ final class SearchE2ETests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
+        app.launchArguments.append("--uitesting")
         app.launch()
     }
 
