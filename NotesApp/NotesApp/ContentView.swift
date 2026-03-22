@@ -13,7 +13,7 @@ struct ContentView: View {
         if trimmedSearch.isEmpty {
             return viewModel.notes
         }
-        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(trimmedSearch) }
+        return viewModel.notes.filter { $0.title.localizedCaseInsensitiveContains(trimmedSearch) }
     }
 
     var body: some View {
@@ -27,7 +27,7 @@ struct ContentView: View {
 
                 List {
                     ForEach(filteredNotes) { note in
-                        Text(note.text)
+                        Text(note.title)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
                                     viewModel.notes.removeAll { $0.id == note.id }
@@ -51,7 +51,16 @@ struct ContentView: View {
 
                     Button {
                         guard !newNoteText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                        viewModel.notes.append(Note(text: newNoteText))
+                        viewModel.notes.append(
+                            Note(
+                                id: UUID().uuidString,
+                                title: newNoteText,
+                                content: "",
+                                categories: [],
+                                createdAt: Date(),
+                                updatedAt: Date()
+                            )
+                        )
                         newNoteText = ""
                     } label: {
                         Image(systemName: "plus.circle.fill")
