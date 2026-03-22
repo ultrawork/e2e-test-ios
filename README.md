@@ -4,6 +4,11 @@ Cross-platform notes application — iOS client built with SwiftUI.
 
 ## Manual API verification
 
-For manual validation of real `APIService` calls against the backend, see [docs/ios-api-verification.md](docs/ios-api-verification.md).
+For a repository-state-aware backend verification guide, see [docs/ios-api-verification.md](docs/ios-api-verification.md).
 
-The guide covers local `API_BASE_URL` configuration (`http://localhost:3000/api`), simulator vs physical device setup, fallback behavior when `API_BASE_URL` is not configured, `curl` examples for categories and notes, and manual CRUD/filter verification steps against the backend from `ultrawork/e2e-test-backend`.
+The document explicitly distinguishes:
+
+- what is verifiable today in `ultrawork/e2e-test-ios` and `ultrawork/e2e-test-backend`;
+- the confirmed backend `API_BASE_URL` value from `.env.example` (`http://localhost:3000/api`);
+- current limitations such as the absence of checked-in iOS networking wiring, missing `/api/categories` routes, and unimplemented `/api/notes` handlers;
+- future manual verification steps to use after real iOS networking and backend endpoints are implemented.
