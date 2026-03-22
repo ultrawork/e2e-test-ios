@@ -5,3 +5,6 @@
 "notes_add_button" = "Добавить заметку";
 "notes_navigation_title" = "Заметки";
 "search_notes_placeholder" = "Поиск заметок...";
+"notes_favorite_button_mark" = "Добавить в избранное";
+"notes_favorite_button_unmark" = "Убрать из избранного";
+"notes_favorites_filter_button" = "Только избранные";
