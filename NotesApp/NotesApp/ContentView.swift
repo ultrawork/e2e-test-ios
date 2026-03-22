@@ -10,10 +10,14 @@ struct ContentView: View {
     }
 
     var filteredNotes: [Note] {
-        if trimmedSearch.isEmpty {
-            return viewModel.notes
+        var result = viewModel.notes
+        if viewModel.showFavoritesOnly {
+            result = result.filter { $0.isFavorited }
         }
-        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(trimmedSearch) }
+        if !trimmedSearch.isEmpty {
+            result = result.filter { $0.text.localizedCaseInsensitiveContains(trimmedSearch) }
+        }
+        return result
     }
 
     var body: some View {
@@ -27,14 +31,29 @@ struct ContentView: View {
 
                 List {
                     ForEach(filteredNotes) { note in
-                        Text(note.text)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    viewModel.notes.removeAll { $0.id == note.id }
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
+                        HStack {
+                            Text(note.text)
+                            Spacer()
+                            Button {
+                                viewModel.toggleFavorite(id: note.id)
+                            } label: {
+                                Image(systemName: note.isFavorited ? "star.fill" : "star")
                             }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("favorite_button_\(note.id)")
+                            .accessibilityLabel(
+                                note.isFavorited
+                                    ? NSLocalizedString("notes_favorite_button_unmark", comment: "Remove from favorites")
+                                    : NSLocalizedString("notes_favorite_button_mark", comment: "Add to favorites")
+                            )
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                viewModel.notes.removeAll { $0.id == note.id }
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
                 }
                 .listStyle(.plain)
@@ -65,6 +84,19 @@ struct ContentView: View {
                 .padding()
             }
             .navigationTitle(NSLocalizedString("notes_navigation_title", comment: "Notes screen title"))
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        viewModel.toggleShowFavoritesOnly()
+                    } label: {
+                        Image(systemName: viewModel.showFavoritesOnly ? "star.fill" : "star")
+                    }
+                    .accessibilityIdentifier("favorites_filter_button")
+                    .accessibilityLabel(
+                        NSLocalizedString("notes_favorites_filter_button", comment: "Filter favorites button")
+                    )
+                }
+            }
             .searchable(
                 text: $searchText,
                 prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
