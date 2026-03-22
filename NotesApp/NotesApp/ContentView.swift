@@ -13,7 +13,7 @@ struct ContentView: View {
         if trimmedSearch.isEmpty {
             return viewModel.notes
         }
-        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(trimmedSearch) }
+        return viewModel.notes.filter { $0.title.localizedCaseInsensitiveContains(trimmedSearch) }
     }
 
     var body: some View {
@@ -27,13 +27,19 @@ struct ContentView: View {
 
                 List {
                     ForEach(filteredNotes) { note in
-                        Text(note.text)
+                        Text(note.title)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
-                                    viewModel.notes.removeAll { $0.id == note.id }
+                                    Task { await viewModel.deleteNote(id: note.id) }
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
+                                Button {
+                                    Task { await viewModel.toggleFavorite(id: note.id) }
+                                } label: {
+                                    Label("Favourite", systemImage: note.isFavorited ? "star.fill" : "star")
+                                }
+                                .tint(.yellow)
                             }
                     }
                 }
@@ -51,8 +57,9 @@ struct ContentView: View {
 
                     Button {
                         guard !newNoteText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                        viewModel.notes.append(Note(text: newNoteText))
+                        let title = newNoteText
                         newNoteText = ""
+                        Task { await viewModel.addNote(title: title) }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
@@ -69,6 +76,20 @@ struct ContentView: View {
                 text: $searchText,
                 prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
             )
+            .task { await viewModel.loadNotes() }
+            .overlay {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+            }
+            .alert("Ошибка", isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.errorMessage = nil } }
+            )) {
+                Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            } message: {
+                Text(viewModel.errorMessage ?? "")
+            }
         }
     }
 }
