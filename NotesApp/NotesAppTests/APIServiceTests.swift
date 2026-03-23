@@ -120,7 +120,26 @@ final class APIServiceTests: XCTestCase {
             XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
             XCTAssertTrue(request.url!.absoluteString.contains("/notes"))
 
-            let body = try! JSONDecoder().decode([String: String].self, from: request.httpBody!)
+            let bodyData: Data
+            if let httpBody = request.httpBody {
+                bodyData = httpBody
+            } else if let stream = request.httpBodyStream {
+                stream.open()
+                var data = Data()
+                let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 1024)
+                defer { buffer.deallocate() }
+                while stream.hasBytesAvailable {
+                    let read = stream.read(buffer, maxLength: 1024)
+                    if read > 0 { data.append(buffer, count: read) }
+                    else { break }
+                }
+                stream.close()
+                bodyData = data
+            } else {
+                XCTFail("Request has no body")
+                return (HTTPURLResponse(url: request.url!, statusCode: 400, httpVersion: nil, headerFields: nil)!, Data())
+            }
+            let body = try! JSONDecoder().decode([String: String].self, from: bodyData)
             XCTAssertEqual(body["title"], "Test")
             XCTAssertEqual(body["content"], "Body")
 
