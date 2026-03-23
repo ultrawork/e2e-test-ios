@@ -7,7 +7,11 @@ final class NotesViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var error: String?
 
-    private let api = APIService.shared
+    private let api: APIServiceProtocol
+
+    init(api: APIServiceProtocol = APIService.shared) {
+        self.api = api
+    }
 
     /// Loads all notes from the API.
     func loadNotes() async {

@@ -1,18 +1,32 @@
 import Foundation
 
+/// Protocol defining the Notes API contract for testability.
+protocol APIServiceProtocol {
+    func fetchNotes() async throws -> [Note]
+    func createNote(title: String, content: String) async throws -> Note
+    func deleteNote(id: String) async throws
+}
+
 /// Service for communicating with the Notes REST API.
-final class APIService {
+final class APIService: APIServiceProtocol {
     static let shared = APIService()
 
     private let baseURL: URL
+    private let session: URLSession
 
-    private init() {
+    private convenience init() {
         let urlString = Bundle.main.infoDictionary?["API_BASE_URL"] as? String
             ?? "http://localhost:3000/api"
         guard let url = URL(string: urlString) else {
             fatalError("Invalid API_BASE_URL: \(urlString)")
         }
-        self.baseURL = url
+        self.init(baseURL: url, session: .shared)
+    }
+
+    /// Testable initializer accepting base URL and URLSession.
+    init(baseURL: URL, session: URLSession) {
+        self.baseURL = baseURL
+        self.session = session
     }
 
     // MARK: - Public API
@@ -20,7 +34,7 @@ final class APIService {
     /// Fetches all notes. Returns an empty array on 401 (unauthorized).
     func fetchNotes() async throws -> [Note] {
         let request = makeRequest(path: "/notes", method: "GET")
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await session.data(for: request)
 
         if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 401 {
             return []
@@ -37,14 +51,14 @@ final class APIService {
         }
         let body = CreateBody(title: title, content: content)
         let request = try makeRequest(path: "/notes", method: "POST", body: body)
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await session.data(for: request)
         return try JSONDecoder().decode(Note.self, from: data)
     }
 
     /// Deletes the note with the given ID.
     func deleteNote(id: String) async throws {
         let request = makeRequest(path: "/notes/\(id)", method: "DELETE")
-        let (_, _) = try await URLSession.shared.data(for: request)
+        let (_, _) = try await session.data(for: request)
     }
 
     // MARK: - Private
