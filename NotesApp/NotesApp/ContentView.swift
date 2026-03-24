@@ -13,24 +13,42 @@ struct ContentView: View {
         if trimmedSearch.isEmpty {
             return viewModel.notes
         }
-        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(trimmedSearch) }
+        return viewModel.notes.filter { $0.title.localizedCaseInsensitiveContains(trimmedSearch) }
     }
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                if let error = viewModel.errorMessage {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.horizontal)
+                        .padding(.vertical, 4)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.red.opacity(0.1))
+                        .accessibilityIdentifier("error_message")
+                }
+
                 NotesCounterView(
                     totalCount: viewModel.notes.count,
                     filteredCount: trimmedSearch.isEmpty ? nil : filteredNotes.count
                 )
                 .padding(.vertical, 8)
 
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .accessibilityIdentifier("loading_indicator")
+                }
+
                 List {
                     ForEach(filteredNotes) { note in
-                        Text(note.text)
+                        Text(note.title)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
-                                    viewModel.notes.removeAll { $0.id == note.id }
+                                    Task { await viewModel.deleteNote(id: note.id) }
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
@@ -50,9 +68,9 @@ struct ContentView: View {
                         .accessibilityIdentifier("new_note_text_field")
 
                     Button {
-                        guard !newNoteText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                        viewModel.notes.append(Note(text: newNoteText))
+                        let text = newNoteText
                         newNoteText = ""
+                        Task { await viewModel.addNote(title: text, content: text) }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
@@ -69,6 +87,7 @@ struct ContentView: View {
                 text: $searchText,
                 prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
             )
+            .task { await viewModel.fetchNotes() }
         }
     }
 }
