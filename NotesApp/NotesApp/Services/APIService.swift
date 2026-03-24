@@ -1,7 +1,7 @@
 import Foundation
 
 /// Errors that can occur during API operations.
-enum APIError: Error, LocalizedError {
+enum APIError: Error, LocalizedError, Equatable {
     case invalidBaseURL
     case invalidURL
     case unauthorized
