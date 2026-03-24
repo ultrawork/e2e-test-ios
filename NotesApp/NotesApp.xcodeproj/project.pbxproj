@@ -10,24 +10,45 @@
 		13B07FE31A68108700A75B9A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FE11A68108700A75B9A; };
 		A1B2C3D71E68108700A75B9A /* NotesCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D41E68108700A75B9A; };
 		A1B2C3D81E68108700A75B9A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D51E68108700A75B9A; };
-		A1B2C3DB1E68108700A75B9A /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D91E68108700A75B9A; };
 		A1B2C3DC1E68108700A75B9A /* NotesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3DA1E68108700A75B9A; };
+		B1C2D3E11F68108700A75B9A /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E01F68108700A75B9A; };
+		B1C2D3E31F68108700A75B9A /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E21F68108700A75B9A; };
+		B1C2D3E51F68108700A75B9A /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E41F68108700A75B9A; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		13B07FE01A68108700A75B9A /* NotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesApp.swift; sourceTree = "<group>"; };
 		13B07FE11A68108700A75B9A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A1B2C3D41E68108700A75B9A /* NotesCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesCounterView.swift; sourceTree = "<group>"; };
-		A1B2C3D91E68108700A75B9A /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		A1B2C3DA1E68108700A75B9A /* NotesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesViewModel.swift; sourceTree = "<group>"; };
 		A1B2C3D51E68108700A75B9A /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* NotesApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NotesApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3DD1E68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B1C2D3E01F68108700A75B9A /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
+		B1C2D3E21F68108700A75B9A /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		B1C2D3E41F68108700A75B9A /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		A1B2C3D61E68108700A75B9A /* Resources */ = {isa = PBXGroup; children = (A1B2C3D51E68108700A75B9A); path = Resources; sourceTree = "<group>"; };
-		13B07FAE1A68108700A75B9A /* NotesApp */ = {isa = PBXGroup; children = (13B07FE01A68108700A75B9A, 13B07FE11A68108700A75B9A, A1B2C3D41E68108700A75B9A, A1B2C3D91E68108700A75B9A, A1B2C3DA1E68108700A75B9A, A1B2C3D61E68108700A75B9A, A1B2C3DD1E68108700A75B9A); path = NotesApp; sourceTree = "<group>"; };
+		B1C2D3E61F68108700A75B9A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B1C2D3E01F68108700A75B9A,
+				B1C2D3E21F68108700A75B9A,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B1C2D3E71F68108700A75B9A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B1C2D3E41F68108700A75B9A,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		13B07FAE1A68108700A75B9A /* NotesApp */ = {isa = PBXGroup; children = (13B07FE01A68108700A75B9A, 13B07FE11A68108700A75B9A, A1B2C3D41E68108700A75B9A, A1B2C3DA1E68108700A75B9A, B1C2D3E61F68108700A75B9A, B1C2D3E71F68108700A75B9A, A1B2C3D61E68108700A75B9A, A1B2C3DD1E68108700A75B9A); path = NotesApp; sourceTree = "<group>"; };
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
@@ -98,8 +119,10 @@
 				13B07FE21A68108700A75B9A,
 				13B07FE31A68108700A75B9A,
 				A1B2C3D71E68108700A75B9A,
-				A1B2C3DB1E68108700A75B9A,
 				A1B2C3DC1E68108700A75B9A,
+				B1C2D3E11F68108700A75B9A,
+				B1C2D3E31F68108700A75B9A,
+				B1C2D3E51F68108700A75B9A,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
