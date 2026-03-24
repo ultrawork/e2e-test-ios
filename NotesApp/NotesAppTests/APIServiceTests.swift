@@ -38,7 +38,7 @@ final class APIServiceTests: XCTestCase {
                 httpVersion: nil,
                 headerFields: nil
             )!
-            let notes = [NoteDTO(id: "1", text: "Test")]
+            let notes = [NoteDTO(id: "1", title: "Test", content: "Test content")]
             let data = try JSONEncoder().encode(notes)
             return (response, data)
         }
@@ -65,7 +65,7 @@ final class APIServiceTests: XCTestCase {
                 httpVersion: nil,
                 headerFields: nil
             )!
-            let notes = [NoteDTO(id: "1", text: "Test")]
+            let notes = [NoteDTO(id: "1", title: "Test", content: "Test content")]
             let data = try JSONEncoder().encode(notes)
             return (response, data)
         }

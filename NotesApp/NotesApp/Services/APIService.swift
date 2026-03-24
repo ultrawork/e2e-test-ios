@@ -26,7 +26,8 @@ protocol APIServiceProtocol {
 /// DTO for notes from API.
 struct NoteDTO: Codable {
     let id: String
-    let text: String
+    let title: String
+    let content: String
 }
 
 /// Service for API communication with token-based authorization.
