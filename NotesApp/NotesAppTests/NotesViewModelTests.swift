@@ -74,10 +74,13 @@ final class NotesViewModelTests: XCTestCase {
 
     func testAddNoteAppendsToArray() async {
         let json = """
-        {"id": "10", "title": "New Note", "content": "", "created_at": "2025-01-01T00:00:00Z", "updated_at": "2025-01-01T00:00:00Z"}
+        {"id": "10", "title": "New Note", "content": "New Note", "created_at": "2025-01-01T00:00:00Z", "updated_at": "2025-01-01T00:00:00Z"}
         """.data(using: .utf8)!
 
         MockURLProtocol.requestHandler = { request in
+            let body = try JSONSerialization.jsonObject(with: request.httpBody ?? Data()) as? [String: String]
+            XCTAssertEqual(body?["title"], "New Note")
+            XCTAssertEqual(body?["content"], "New Note")
             let response = HTTPURLResponse(url: request.url!, statusCode: 201, httpVersion: nil, headerFields: nil)!
             return (response, json)
         }

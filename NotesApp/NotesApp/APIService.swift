@@ -69,8 +69,8 @@ final class APIService {
         #endif
     }
 
-    /// Универсальный метод запроса к API.
-    private func request<T: Decodable>(_ path: String, method: String, body: Data? = nil) async throws -> T {
+    /// Общий метод выполнения HTTP-запроса с авторизацией.
+    private func performRequest(_ path: String, method: String, body: Data? = nil) async throws -> (Data, HTTPURLResponse) {
         try await ensureToken()
 
         guard let url = URL(string: "\(baseURL)\(path)") else {
@@ -89,7 +89,8 @@ final class APIService {
             urlRequest.httpBody = body
         }
 
-        let (data, response): (Data, URLResponse)
+        let data: Data
+        let response: URLResponse
         do {
             (data, response) = try await session.data(for: urlRequest)
         } catch {
@@ -108,6 +109,12 @@ final class APIService {
             throw APIError.badResponse(httpResponse.statusCode)
         }
 
+        return (data, httpResponse)
+    }
+
+    /// Универсальный метод запроса к API с декодированием ответа.
+    private func request<T: Decodable>(_ path: String, method: String, body: Data? = nil) async throws -> T {
+        let (data, _) = try await performRequest(path, method: method, body: body)
         do {
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -119,38 +126,7 @@ final class APIService {
 
     /// Запрос без возвращаемого тела (для DELETE).
     private func requestVoid(_ path: String, method: String) async throws {
-        try await ensureToken()
-
-        guard let url = URL(string: "\(baseURL)\(path)") else {
-            throw APIError.serverError("Некорректный URL")
-        }
-
-        var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = method
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        if let token = getToken() {
-            urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        let (_, response): (Data, URLResponse)
-        do {
-            (_, response) = try await session.data(for: urlRequest)
-        } catch {
-            throw APIError.network(error)
-        }
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.serverError("Некорректный ответ сервера")
-        }
-
-        if httpResponse.statusCode == 401 {
-            throw APIError.unauthorized
-        }
-
-        guard (200...299).contains(httpResponse.statusCode) else {
-            throw APIError.badResponse(httpResponse.statusCode)
-        }
+        _ = try await performRequest(path, method: method)
     }
 
     /// Получает список заметок.

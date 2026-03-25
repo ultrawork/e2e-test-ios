@@ -63,7 +63,7 @@ test('SC-3: POST /api/notes creates a note and returns it', async () => {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ title: 'Test Note', content: '' }),
+    body: JSON.stringify({ title: 'Test Note', content: 'Test Note' }),
   });
 
   expect(response.status).toBe(201);
@@ -90,7 +90,7 @@ test('SC-4: DELETE /api/notes/:id removes the note', async () => {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ title: 'To Delete', content: '' }),
+    body: JSON.stringify({ title: 'To Delete', content: 'To Delete' }),
   });
   expect(createResponse.status).toBe(201);
   const created = await createResponse.json();
