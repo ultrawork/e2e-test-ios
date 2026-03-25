@@ -6,7 +6,11 @@ final class NotesViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var error: Error?
 
-    private let apiService = APIService()
+    private let apiService: APIService
+
+    init(apiService: APIService = APIService()) {
+        self.apiService = apiService
+    }
 
     /// Загружает список заметок с сервера.
     func loadNotes() async {
