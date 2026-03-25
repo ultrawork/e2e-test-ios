@@ -5,3 +5,7 @@
 "notes_add_button" = "Добавить заметку";
 "notes_navigation_title" = "Заметки";
 "search_notes_placeholder" = "Поиск заметок...";
+"error_alert_title" = "Ошибка";
+"error_alert_ok" = "OK";
+"error_alert_retry" = "Повторить";
+"error_unknown" = "Неизвестная ошибка";
