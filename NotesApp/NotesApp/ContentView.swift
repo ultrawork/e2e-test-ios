@@ -4,6 +4,7 @@ struct ContentView: View {
     @StateObject private var viewModel = NotesViewModel()
     @State private var newNoteText = ""
     @State private var searchText = ""
+    @State private var showErrorAlert = false
 
     private var trimmedSearch: String {
         searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -13,7 +14,7 @@ struct ContentView: View {
         if trimmedSearch.isEmpty {
             return viewModel.notes
         }
-        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(trimmedSearch) }
+        return viewModel.notes.filter { $0.title.localizedCaseInsensitiveContains(trimmedSearch) }
     }
 
     var body: some View {
@@ -25,21 +26,29 @@ struct ContentView: View {
                 )
                 .padding(.vertical, 8)
 
-                List {
-                    ForEach(filteredNotes) { note in
-                        Text(note.text)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    viewModel.notes.removeAll { $0.id == note.id }
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
+                ZStack {
+                    List {
+                        ForEach(filteredNotes) { note in
+                            Text(note.title)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        Task {
+                                            await viewModel.deleteNote(id: note.id)
+                                        }
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
                                 }
-                            }
+                        }
+                    }
+                    .listStyle(.plain)
+                    .scrollDismissesKeyboard(.interactively)
+                    .accessibilityIdentifier("notes_list")
+
+                    if viewModel.isLoading {
+                        ProgressView()
                     }
                 }
-                .listStyle(.plain)
-                .scrollDismissesKeyboard(.interactively)
-                .accessibilityIdentifier("notes_list")
 
                 HStack {
                     TextField(NSLocalizedString("notes_new_note_placeholder", comment: "New note placeholder"), text: $newNoteText)
@@ -51,8 +60,11 @@ struct ContentView: View {
 
                     Button {
                         guard !newNoteText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                        viewModel.notes.append(Note(text: newNoteText))
+                        let title = newNoteText
                         newNoteText = ""
+                        Task {
+                            await viewModel.addNote(title: title)
+                        }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
@@ -69,6 +81,21 @@ struct ContentView: View {
                 text: $searchText,
                 prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
             )
+            .onAppear {
+                Task {
+                    await viewModel.loadNotes()
+                }
+            }
+            .alert("Ошибка", isPresented: $showErrorAlert, actions: {
+                Button("OK") {
+                    viewModel.error = nil
+                }
+            }, message: {
+                Text(viewModel.error?.localizedDescription ?? "Неизвестная ошибка")
+            })
+            .onChange(of: viewModel.error != nil) { _, hasError in
+                showErrorAlert = hasError
+            }
         }
     }
 }
