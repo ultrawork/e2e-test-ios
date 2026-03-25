@@ -6,6 +6,6 @@ export default defineConfig({
   retries: 2,
   reporter: [['junit', { outputFile: 'test-results/results.xml' }]],
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3001',
+    baseURL: process.env.API_URL || process.env.BASE_URL || 'http://localhost:3001',
   },
 });

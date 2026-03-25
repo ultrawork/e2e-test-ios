@@ -42,14 +42,25 @@ final class APIService: APIServiceProtocol {
     init(session: URLSession = .shared) {
         self.session = session
 
-        if let url = Bundle.main.object(forInfoDictionaryKey: "API_BASE_URL") as? String {
+        if let envURL = ProcessInfo.processInfo.environment["API_BASE_URL"], !envURL.isEmpty {
+            self.baseURL = envURL
+        } else if let url = Bundle.main.object(forInfoDictionaryKey: "API_BASE_URL") as? String {
             self.baseURL = url
         } else {
             self.baseURL = "http://localhost:3001"
         }
 
         self.decoder = JSONDecoder()
-        self.decoder.dateDecodingStrategy = .iso8601
+        self.decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let string = try container.decode(String.self)
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let date = formatter.date(from: string) { return date }
+            formatter.formatOptions = [.withInternetDateTime]
+            if let date = formatter.date(from: string) { return date }
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid ISO8601 date")
+        }
 
         self.encoder = JSONEncoder()
         self.encoder.dateEncodingStrategy = .iso8601
