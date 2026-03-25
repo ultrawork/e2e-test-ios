@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var newNoteText = ""
     @State private var searchText = ""
     @State private var showErrorAlert = false
+    @State private var lastFailedAction: (() async -> Void)?
 
     private var trimmedSearch: String {
         searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -33,6 +34,7 @@ struct ContentView: View {
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
                                         Task {
+                                            lastFailedAction = { await viewModel.deleteNote(id: note.id) }
                                             await viewModel.deleteNote(id: note.id)
                                         }
                                     } label: {
@@ -63,6 +65,7 @@ struct ContentView: View {
                         let title = newNoteText
                         newNoteText = ""
                         Task {
+                            lastFailedAction = { await viewModel.addNote(title: title) }
                             await viewModel.addNote(title: title)
                         }
                     } label: {
@@ -83,16 +86,29 @@ struct ContentView: View {
             )
             .onAppear {
                 Task {
+                    lastFailedAction = { await viewModel.loadNotes() }
                     await viewModel.loadNotes()
                 }
             }
-            .alert("Ошибка", isPresented: $showErrorAlert, actions: {
-                Button("OK") {
-                    viewModel.error = nil
+            .alert(
+                NSLocalizedString("error_alert_title", comment: "Error alert title"),
+                isPresented: $showErrorAlert,
+                actions: {
+                    Button(NSLocalizedString("error_alert_retry", comment: "Retry button")) {
+                        let action = lastFailedAction
+                        viewModel.error = nil
+                        Task {
+                            await action?()
+                        }
+                    }
+                    Button(NSLocalizedString("error_alert_ok", comment: "OK button"), role: .cancel) {
+                        viewModel.error = nil
+                    }
+                },
+                message: {
+                    Text(viewModel.error?.localizedDescription ?? NSLocalizedString("error_unknown", comment: "Unknown error"))
                 }
-            }, message: {
-                Text(viewModel.error?.localizedDescription ?? "Неизвестная ошибка")
-            })
+            )
             .onChange(of: viewModel.error != nil) { _, hasError in
                 showErrorAlert = hasError
             }

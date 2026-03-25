@@ -1,8 +1,0 @@
-{
-  "name": "e2e-test-ios-api",
-  "version": "1.0.0",
-  "private": true,
-  "devDependencies": {
-    "@playwright/test": "^1.52.0"
-  }
-}

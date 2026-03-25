@@ -10,5 +10,3 @@ xcuserdata/
 *.hmap
 .DS_Store
 Pods/
-node_modules/
-test-results/

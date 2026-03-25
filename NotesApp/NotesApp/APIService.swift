@@ -40,7 +40,9 @@ final class APIService {
     #if DEBUG
     /// Запрашивает dev-токен и сохраняет в UserDefaults.
     private func fetchDevToken() async throws {
-        guard let url = URL(string: "\(baseURL)/api/auth/dev-token") else { return }
+        guard let url = URL(string: "\(baseURL)/api/auth/dev-token") else {
+            throw APIError.serverError("Invalid dev-token URL")
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
