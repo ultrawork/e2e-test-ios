@@ -15,12 +15,13 @@ final class NotesViewModel: ObservableObject {
     func fetchNotes() async {
         isLoading = true
         errorMessage = nil
+        defer { isLoading = false }
         do {
             notes = try await apiService.fetchNotes()
         } catch {
+            if error is CancellationError { return }
             errorMessage = errorDescription(error)
         }
-        isLoading = false
     }
 
     func addNote(title: String, content: String) async {
@@ -28,6 +29,7 @@ final class NotesViewModel: ObservableObject {
             let note = try await apiService.createNote(title: title, content: content)
             notes.insert(note, at: 0)
         } catch {
+            if error is CancellationError { return }
             errorMessage = errorDescription(error)
         }
     }
@@ -37,6 +39,7 @@ final class NotesViewModel: ObservableObject {
             try await apiService.deleteNote(id: id)
             notes.removeAll { $0.id == id }
         } catch {
+            if error is CancellationError { return }
             errorMessage = errorDescription(error)
         }
     }

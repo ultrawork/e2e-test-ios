@@ -189,6 +189,34 @@ final class NotesViewModelTests: XCTestCase {
         XCTAssertFalse(sut.notes[0].isFavorited)
     }
 
+    // MARK: - CancellationError
+
+    func testFetchNotesCancellationErrorIsIgnored() async {
+        mockService.fetchNotesResult = .failure(CancellationError())
+
+        await sut.fetchNotes()
+
+        XCTAssertNil(sut.errorMessage)
+        XCTAssertFalse(sut.isLoading)
+    }
+
+    func testAddNoteCancellationErrorIsIgnored() async {
+        mockService.createNoteResult = .failure(CancellationError())
+
+        await sut.addNote(title: "T", content: "C")
+
+        XCTAssertNil(sut.errorMessage)
+    }
+
+    func testDeleteNoteCancellationErrorIsIgnored() async {
+        sut.notes = [MockAPIService.sampleNote(id: "1")]
+        mockService.deleteNoteResult = .failure(CancellationError())
+
+        await sut.deleteNote(id: "1")
+
+        XCTAssertNil(sut.errorMessage)
+    }
+
     // MARK: - Error descriptions
 
     func testUnauthorizedErrorDescription() async {
