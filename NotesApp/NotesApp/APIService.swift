@@ -38,7 +38,11 @@ final class APIService: APIServiceProtocol {
         let request = try makeRequest(path: "/notes", method: "GET")
         let (data, response) = try await perform(request)
         try validateResponse(response)
-        return try makeDecoder().decode([Note].self, from: data)
+        do {
+            return try makeDecoder().decode([Note].self, from: data)
+        } catch {
+            throw APIError.decodingError(error)
+        }
     }
 
     func createNote(title: String, content: String) async throws -> Note {
@@ -48,7 +52,11 @@ final class APIService: APIServiceProtocol {
         request.httpBody = bodyData
         let (data, response) = try await perform(request)
         try validateResponse(response)
-        return try makeDecoder().decode(Note.self, from: data)
+        do {
+            return try makeDecoder().decode(Note.self, from: data)
+        } catch {
+            throw APIError.decodingError(error)
+        }
     }
 
     func deleteNote(id: String) async throws {
