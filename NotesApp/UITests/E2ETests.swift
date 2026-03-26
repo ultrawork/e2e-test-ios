@@ -202,10 +202,33 @@ final class E2ETests: XCTestCase {
     // MARK: - SC-005: Search filters notes by title
 
     func testSC005_searchFiltersNotes() {
+        // Relaunch with JWT token so API calls succeed
+        app.terminate()
+        app = XCUIApplication()
+        app.launchArguments += ["-resetDefaults"]
+        app.launchEnvironment["JWT_TOKEN"] = "test-e2e-token"
+        app.launchEnvironment["API_BASE_URL"] = "http://localhost:4001"
+        app.launch()
+
+        // Wait for initial load to complete
+        let loadingIndicator = app.activityIndicators["loading_indicator"]
+        if loadingIndicator.waitForExistence(timeout: 3) {
+            let disappeared = NSPredicate(format: "exists == false")
+            let expectation = XCTNSPredicateExpectation(predicate: disappeared, object: loadingIndicator)
+            _ = XCTWaiter().wait(for: [expectation], timeout: 10)
+        }
+
         // Add notes
         addNote("Покупки")
+        let note1 = app.staticTexts["Покупки"]
+        XCTAssertTrue(note1.waitForExistence(timeout: 10), "First note should appear")
         addNote("Работа")
+        let note2 = app.staticTexts["Работа"]
+        XCTAssertTrue(note2.waitForExistence(timeout: 10), "Second note should appear")
+
         addNote("Покупки на выходные")
+        let note3 = app.staticTexts["Покупки на выходные"]
+        XCTAssertTrue(note3.waitForExistence(timeout: 10), "Third note should appear")
 
         // Verify all 3 notes present
         assertCounterEquals("Всего заметок: 3")
