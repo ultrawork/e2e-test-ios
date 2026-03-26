@@ -53,8 +53,28 @@ final class SearchE2ETests: XCTestCase {
     // MARK: - SC-008: Case-insensitive search
 
     func testSC008_searchIsCaseInsensitive() {
+        // Relaunch with JWT token so API calls succeed
+        app.terminate()
+        app = XCUIApplication()
+        app.launchArguments += ["-resetDefaults"]
+        app.launchEnvironment["JWT_TOKEN"] = "test-e2e-token"
+        app.launchEnvironment["API_BASE_URL"] = "http://localhost:4001"
+        app.launch()
+
+        // Wait for initial load to complete
+        let loadingIndicator = app.activityIndicators["loading_indicator"]
+        if loadingIndicator.waitForExistence(timeout: 3) {
+            let disappeared = NSPredicate(format: "exists == false")
+            let expectation = XCTNSPredicateExpectation(predicate: disappeared, object: loadingIndicator)
+            _ = XCTWaiter().wait(for: [expectation], timeout: 10)
+        }
+
         // Add a note with mixed case
         addNote("Важная Заметка")
+
+        // Wait for note to appear via API round-trip
+        let noteText = app.staticTexts["Важная Заметка"]
+        XCTAssertTrue(noteText.waitForExistence(timeout: 10), "Note should appear after API call")
 
         // Verify initial state
         assertCounterEquals("Всего заметок: 1")
