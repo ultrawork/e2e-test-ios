@@ -4,6 +4,15 @@ final class SearchE2ETests: XCTestCase {
 
     private var app: XCUIApplication!
 
+    /// A valid JWT signed with the E2E test secret.
+    private let validJWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlMmUtdGVzdC11c2VyIiwidXNlcklkIjoiZTJlLXRlc3QtdXNlciIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.lPBIxRCcx4G4lRWbyEd35UkcFTxDbNV676O9pSJlcRI"
+
+    private var apiBaseURL: String {
+        ProcessInfo.processInfo.environment["API_URL"]
+            ?? ProcessInfo.processInfo.environment["API_BASE_URL"]
+            ?? "http://localhost:4001"
+    }
+
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
@@ -57,8 +66,8 @@ final class SearchE2ETests: XCTestCase {
         app.terminate()
         app = XCUIApplication()
         app.launchArguments += ["-resetDefaults"]
-        app.launchEnvironment["JWT_TOKEN"] = "test-e2e-token"
-        app.launchEnvironment["API_BASE_URL"] = "http://localhost:4001"
+        app.launchEnvironment["JWT_TOKEN"] = validJWT
+        app.launchEnvironment["API_BASE_URL"] = apiBaseURL
         app.launch()
 
         // Wait for initial load to complete
