@@ -52,7 +52,7 @@ final class APIService: APIServiceProtocol {
         if let token = token {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        request.timeoutInterval = 5
+        request.timeoutInterval = 2
         request.httpBody = body
         return request
     }

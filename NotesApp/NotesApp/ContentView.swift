@@ -35,6 +35,7 @@ struct ContentView: View {
                     }
                     .padding()
                     .background(Color.red)
+                    .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("error_banner")
                 }
 
