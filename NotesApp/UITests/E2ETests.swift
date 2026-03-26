@@ -85,15 +85,31 @@ final class E2ETests: XCTestCase {
     // MARK: - SC-002: Adding notes updates counter
 
     func testSC002_addNotesUpdatesCounter() {
+        // Relaunch with JWT token so API calls succeed
+        app.terminate()
+        app = XCUIApplication()
+        app.launchArguments += ["-resetDefaults"]
+        app.launchEnvironment["JWT_TOKEN"] = "test-e2e-token"
+        app.launchEnvironment["API_BASE_URL"] = "http://localhost:4001"
+        app.launch()
+
+        // Wait for initial load to complete
+        let loadingIndicator = app.activityIndicators["loading_indicator"]
+        if loadingIndicator.waitForExistence(timeout: 3) {
+            let disappeared = NSPredicate(format: "exists == false")
+            let expectation = XCTNSPredicateExpectation(predicate: disappeared, object: loadingIndicator)
+            _ = XCTWaiter().wait(for: [expectation], timeout: 10)
+        }
+
         // Initial counter is 0
         assertCounterEquals("Всего заметок: 0")
 
         // Add first note
         addNote("Первая заметка")
 
-        // Verify note appears in the list
+        // Verify note appears in the list (longer timeout for API round-trip)
         let firstNote = app.staticTexts["Первая заметка"]
-        XCTAssertTrue(firstNote.waitForExistence(timeout: 5), "First note should appear in the list")
+        XCTAssertTrue(firstNote.waitForExistence(timeout: 10), "First note should appear in the list")
 
         // Counter should be 1
         assertCounterEquals("Всего заметок: 1")
@@ -103,7 +119,7 @@ final class E2ETests: XCTestCase {
 
         // Verify second note appears
         let secondNote = app.staticTexts["Вторая заметка"]
-        XCTAssertTrue(secondNote.waitForExistence(timeout: 5), "Second note should appear in the list")
+        XCTAssertTrue(secondNote.waitForExistence(timeout: 10), "Second note should appear in the list")
 
         // Counter should be 2
         assertCounterEquals("Всего заметок: 2")
