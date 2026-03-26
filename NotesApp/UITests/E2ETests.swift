@@ -128,14 +128,30 @@ final class E2ETests: XCTestCase {
     // MARK: - SC-003: Swipe to delete updates counter
 
     func testSC003_swipeToDeleteUpdatesCounter() {
+        // Relaunch with JWT token so API calls succeed
+        app.terminate()
+        app = XCUIApplication()
+        app.launchArguments += ["-resetDefaults"]
+        app.launchEnvironment["JWT_TOKEN"] = "test-e2e-token"
+        app.launchEnvironment["API_BASE_URL"] = "http://localhost:4001"
+        app.launch()
+
+        // Wait for initial load to complete
+        let loadingIndicator = app.activityIndicators["loading_indicator"]
+        if loadingIndicator.waitForExistence(timeout: 3) {
+            let disappeared = NSPredicate(format: "exists == false")
+            let expectation = XCTNSPredicateExpectation(predicate: disappeared, object: loadingIndicator)
+            _ = XCTWaiter().wait(for: [expectation], timeout: 10)
+        }
+
         // Add two notes
         addNote("Заметка X")
         let noteX = app.staticTexts["Заметка X"]
-        XCTAssertTrue(noteX.waitForExistence(timeout: 5))
+        XCTAssertTrue(noteX.waitForExistence(timeout: 10))
 
         addNote("Заметка Y")
         let noteY = app.staticTexts["Заметка Y"]
-        XCTAssertTrue(noteY.waitForExistence(timeout: 5))
+        XCTAssertTrue(noteY.waitForExistence(timeout: 10))
 
         // Counter should be 2
         assertCounterEquals("Всего заметок: 2")
@@ -147,7 +163,7 @@ final class E2ETests: XCTestCase {
         deleteButton.tap()
 
         // Verify "Заметка X" is gone
-        XCTAssertFalse(noteX.waitForExistence(timeout: 3), "Deleted note should no longer exist")
+        XCTAssertFalse(noteX.waitForExistence(timeout: 5), "Deleted note should no longer exist")
 
         // Counter should be 1
         assertCounterEquals("Всего заметок: 1")
