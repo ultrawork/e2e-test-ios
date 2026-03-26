@@ -295,6 +295,7 @@ final class E2ETests: XCTestCase {
         app.terminate()
         app = XCUIApplication()
         app.launchEnvironment["JWT_TOKEN"] = "test-e2e-token"
+        app.launchEnvironment["API_BASE_URL"] = "http://localhost:4001"
         app.launch()
 
         // Wait for notes to load (loading indicator should disappear)

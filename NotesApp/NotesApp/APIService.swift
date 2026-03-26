@@ -37,7 +37,9 @@ final class APIService: APIServiceProtocol {
 
     init(session: URLSession = .shared) {
         self.session = session
-        self.baseURL = Bundle.main.infoDictionary?["API_BASE_URL"] as? String ?? "http://localhost:3000"
+        self.baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"]
+            ?? Bundle.main.infoDictionary?["API_BASE_URL"] as? String
+            ?? "http://localhost:3000"
     }
 
     private var token: String? {
@@ -52,7 +54,7 @@ final class APIService: APIServiceProtocol {
         if let token = token {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        request.timeoutInterval = 2
+        request.timeoutInterval = 5
         request.httpBody = body
         return request
     }
