@@ -1,15 +1,15 @@
 import Foundation
 
 struct Note: Identifiable, Codable {
-    let id: Int
+    let id: String
     let text: String
 
     enum CodingKeys: String, CodingKey {
-        case id = "id"
-        case text = "text"
+        case id
+        case text = "content"
     }
 
-    init(id: Int = Int.random(in: 1...999_999), text: String) {
+    init(id: String = UUID().uuidString, text: String) {
         self.id = id
         self.text = text
     }

@@ -24,8 +24,8 @@ final class NotesViewModelTests: XCTestCase {
     func test_fetchNotes_success_populatesNotes() async {
         let mockService = MockAPIService()
         mockService.result = .success([
-            Note(id: 1, text: "Hello"),
-            Note(id: 2, text: "World")
+            Note(id: "1", text: "Hello"),
+            Note(id: "2", text: "World")
         ])
 
         let viewModel = NotesViewModel(apiService: mockService)
@@ -54,7 +54,7 @@ final class NotesViewModelTests: XCTestCase {
     /// Проверяет, что isLoading = true во время выполнения запроса.
     func test_fetchNotes_setsIsLoadingDuringFetch() async {
         let mockService = MockAPIService()
-        mockService.result = .success([Note(id: 1, text: "Test")])
+        mockService.result = .success([Note(id: "1", text: "Test")])
 
         let viewModel = NotesViewModel(apiService: mockService)
         mockService.viewModel = viewModel

@@ -64,7 +64,7 @@ final class APIServiceTests: XCTestCase {
                 httpVersion: nil,
                 headerFields: nil
             )!
-            let data = try JSONEncoder().encode([Note(id: 1, text: "Test")])
+            let data = try JSONEncoder().encode([Note(id: "1", text: "Test")])
             return (response, data)
         }
 
@@ -100,7 +100,7 @@ final class APIServiceTests: XCTestCase {
         UserDefaults.standard.set("token", forKey: "token")
 
         let json = """
-        [{"id": 1, "text": "First"}, {"id": 2, "text": "Second"}]
+        [{"id": "1", "content": "First"}, {"id": "2", "content": "Second"}]
         """.data(using: .utf8)!
 
         MockURLProtocol.requestHandler = { request in
@@ -116,9 +116,9 @@ final class APIServiceTests: XCTestCase {
         let notes = try await apiService.fetchNotes()
 
         XCTAssertEqual(notes.count, 2)
-        XCTAssertEqual(notes[0].id, 1)
+        XCTAssertEqual(notes[0].id, "1")
         XCTAssertEqual(notes[0].text, "First")
-        XCTAssertEqual(notes[1].id, 2)
+        XCTAssertEqual(notes[1].id, "2")
         XCTAssertEqual(notes[1].text, "Second")
     }
 }
