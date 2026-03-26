@@ -44,6 +44,7 @@ final class APIService: APIServiceProtocol {
 
     private var token: String? {
         UserDefaults.standard.string(forKey: "jwtToken")
+            ?? ProcessInfo.processInfo.environment["JWT_TOKEN"]
     }
 
     private func makeRequest(path: String, method: String, body: Data? = nil) -> URLRequest {
@@ -54,7 +55,7 @@ final class APIService: APIServiceProtocol {
         if let token = token {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        request.timeoutInterval = 5
+        request.timeoutInterval = 30
         request.httpBody = body
         return request
     }
