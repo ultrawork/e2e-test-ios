@@ -13,7 +13,7 @@ struct ContentView: View {
         if trimmedSearch.isEmpty {
             return viewModel.notes
         }
-        return viewModel.notes.filter { $0.text.localizedCaseInsensitiveContains(trimmedSearch) }
+        return viewModel.notes.filter { $0.title.localizedCaseInsensitiveContains(trimmedSearch) }
     }
 
     var body: some View {
@@ -25,21 +25,59 @@ struct ContentView: View {
                 )
                 .padding(.vertical, 8)
 
+                if let errorMessage = viewModel.errorMessage {
+                    HStack {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                        Spacer()
+                        Button("Dismiss") {
+                            viewModel.errorMessage = nil
+                        }
+                        .font(.caption)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 4)
+                }
+
                 List {
                     ForEach(filteredNotes) { note in
-                        Text(note.text)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    viewModel.notes.removeAll { $0.id == note.id }
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(note.title)
+                                if !note.content.isEmpty {
+                                    Text(note.content)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
                                 }
                             }
+                            Spacer()
+                            if note.isFavorited {
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(.red)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            viewModel.toggleFavorite(note: note)
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                Task { await viewModel.deleteNote(id: note.id) }
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
                 }
                 .listStyle(.plain)
                 .scrollDismissesKeyboard(.interactively)
                 .accessibilityIdentifier("notes_list")
+                .overlay {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+                }
 
                 HStack {
                     TextField(NSLocalizedString("notes_new_note_placeholder", comment: "New note placeholder"), text: $newNoteText)
@@ -51,8 +89,9 @@ struct ContentView: View {
 
                     Button {
                         guard !newNoteText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                        viewModel.notes.append(Note(text: newNoteText))
+                        let title = newNoteText
                         newNoteText = ""
+                        Task { await viewModel.addNote(title: title, content: "") }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
@@ -69,6 +108,9 @@ struct ContentView: View {
                 text: $searchText,
                 prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
             )
+            .task {
+                await viewModel.fetchNotes()
+            }
         }
     }
 }
