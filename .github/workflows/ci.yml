@@ -11,3 +11,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build
         run: xcodebuild -project NotesApp/NotesApp.xcodeproj -scheme NotesApp -destination 'platform=iOS Simulator,name=iPhone 16' build
+      - name: Unit Tests
+        run: xcodebuild -project NotesApp/NotesApp.xcodeproj -scheme NotesAppTests -destination 'platform=iOS Simulator,name=iPhone 16' test

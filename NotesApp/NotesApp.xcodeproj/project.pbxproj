@@ -12,7 +12,20 @@
 		A1B2C3D81E68108700A75B9A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D51E68108700A75B9A; };
 		A1B2C3DB1E68108700A75B9A /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D91E68108700A75B9A; };
 		A1B2C3DC1E68108700A75B9A /* NotesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3DA1E68108700A75B9A; };
+		B1A2B3C51F68108700A75B9A /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A2B3C41F68108700A75B9A; };
+		B1A2B3CA1F68108700A75B9A /* APIServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A2B3C81F68108700A75B9A; };
+		B1A2B3CB1F68108700A75B9A /* NotesViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A2B3C91F68108700A75B9A; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B1A2B3D01F68108700A75B9A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192;
+			proxyType = 1;
+			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
+			remoteInfo = NotesApp;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		13B07FE01A68108700A75B9A /* NotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesApp.swift; sourceTree = "<group>"; };
@@ -23,15 +36,30 @@
 		A1B2C3D51E68108700A75B9A /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* NotesApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NotesApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3DD1E68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B1A2B3C41F68108700A75B9A /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
+		B1A2B3C61F68108700A75B9A /* NotesAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotesAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1A2B3C81F68108700A75B9A /* APIServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIServiceTests.swift; sourceTree = "<group>"; };
+		B1A2B3C91F68108700A75B9A /* NotesViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B1A2B3CE1F68108700A75B9A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		A1B2C3D61E68108700A75B9A /* Resources */ = {isa = PBXGroup; children = (A1B2C3D51E68108700A75B9A); path = Resources; sourceTree = "<group>"; };
-		13B07FAE1A68108700A75B9A /* NotesApp */ = {isa = PBXGroup; children = (13B07FE01A68108700A75B9A, 13B07FE11A68108700A75B9A, A1B2C3D41E68108700A75B9A, A1B2C3D91E68108700A75B9A, A1B2C3DA1E68108700A75B9A, A1B2C3D61E68108700A75B9A, A1B2C3DD1E68108700A75B9A); path = NotesApp; sourceTree = "<group>"; };
+		13B07FAE1A68108700A75B9A /* NotesApp */ = {isa = PBXGroup; children = (13B07FE01A68108700A75B9A, 13B07FE11A68108700A75B9A, A1B2C3D41E68108700A75B9A, A1B2C3D91E68108700A75B9A, A1B2C3DA1E68108700A75B9A, B1A2B3C41F68108700A75B9A, A1B2C3D61E68108700A75B9A, A1B2C3DD1E68108700A75B9A); path = NotesApp; sourceTree = "<group>"; };
+		B1A2B3C71F68108700A75B9A /* NotesAppTests */ = {isa = PBXGroup; children = (B1A2B3C81F68108700A75B9A, B1A2B3C91F68108700A75B9A); path = NotesAppTests; sourceTree = "<group>"; };
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
 				13B07FAE1A68108700A75B9A,
+				B1A2B3C71F68108700A75B9A,
 				83CBB9F51A601CBA00E9B192,
 			);
 			sourceTree = "<group>";
@@ -40,6 +68,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A,
+				B1A2B3C61F68108700A75B9A,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -60,6 +89,22 @@
 			productName = NotesApp;
 			productReference = 13B07F961A680F5B00A75B9A;
 			productType = "com.apple.product-type.application";
+		};
+		B1A2B3CC1F68108700A75B9A /* NotesAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1A2B3D31F68108700A75B9A;
+			buildPhases = (
+				B1A2B3CD1F68108700A75B9A,
+				B1A2B3CE1F68108700A75B9A,
+			);
+			buildRules = ();
+			dependencies = (
+				B1A2B3CF1F68108700A75B9A,
+			);
+			name = NotesAppTests;
+			productName = NotesAppTests;
+			productReference = B1A2B3C61F68108700A75B9A;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -86,6 +131,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A,
+				B1A2B3CC1F68108700A75B9A,
 			);
 		};
 /* End PBXProject section */
@@ -100,6 +146,16 @@
 				A1B2C3D71E68108700A75B9A,
 				A1B2C3DB1E68108700A75B9A,
 				A1B2C3DC1E68108700A75B9A,
+				B1A2B3C51F68108700A75B9A,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1A2B3CD1F68108700A75B9A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1A2B3CA1F68108700A75B9A,
+				B1A2B3CB1F68108700A75B9A,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,6 +171,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B1A2B3CF1F68108700A75B9A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 13B07F861A680F5B00A75B9A;
+			targetProxy = B1A2B3D01F68108700A75B9A;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
@@ -168,6 +232,44 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B1A2B3D11F68108700A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultrawork.notes.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NotesApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NotesApp";
+			};
+			name = Debug;
+		};
+		B1A2B3D21F68108700A75B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultrawork.notes.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NotesApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NotesApp";
 			};
 			name = Release;
 		};
@@ -298,6 +400,15 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A,
 				13B07F951A680F5B00A75B9A,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1A2B3D31F68108700A75B9A /* Build configuration list for PBXNativeTarget "NotesAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1A2B3D11F68108700A75B9A,
+				B1A2B3D21F68108700A75B9A,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
