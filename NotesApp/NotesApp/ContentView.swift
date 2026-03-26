@@ -19,6 +19,25 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                if let errorMessage = viewModel.errorMessage {
+                    HStack {
+                        Text(errorMessage)
+                            .foregroundColor(.white)
+                            .font(.subheadline)
+                        Spacer()
+                        Button {
+                            viewModel.dismissError()
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.white)
+                        }
+                        .accessibilityIdentifier("dismiss_error_button")
+                    }
+                    .padding()
+                    .background(Color.red)
+                    .accessibilityIdentifier("error_banner")
+                }
+
                 NotesCounterView(
                     totalCount: viewModel.notes.count,
                     filteredCount: trimmedSearch.isEmpty ? nil : filteredNotes.count
@@ -30,7 +49,7 @@ struct ContentView: View {
                         Text(note.text)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
-                                    viewModel.notes.removeAll { $0.id == note.id }
+                                    Task { await viewModel.deleteNote(id: note.id) }
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
@@ -51,8 +70,9 @@ struct ContentView: View {
 
                     Button {
                         guard !newNoteText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                        viewModel.notes.append(Note(text: newNoteText))
+                        let text = newNoteText
                         newNoteText = ""
+                        Task { await viewModel.addNote(text: text) }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
@@ -64,11 +84,20 @@ struct ContentView: View {
                 }
                 .padding()
             }
+            .overlay {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .accessibilityIdentifier("loading_indicator")
+                }
+            }
             .navigationTitle(NSLocalizedString("notes_navigation_title", comment: "Notes screen title"))
             .searchable(
                 text: $searchText,
                 prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
             )
+            .onAppear {
+                Task { await viewModel.loadNotes() }
+            }
         }
     }
 }

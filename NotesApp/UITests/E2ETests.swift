@@ -7,6 +7,7 @@ final class E2ETests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
+        app.launchArguments += ["-resetDefaults"]
         app.launch()
     }
 
@@ -15,6 +16,10 @@ final class E2ETests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    private var errorBanner: XCUIElement {
+        app.otherElements["error_banner"]
+    }
 
     private var notesCounter: XCUIElement {
         app.staticTexts["notes_counter_text"]
@@ -271,5 +276,49 @@ final class E2ETests: XCTestCase {
         let list = notesList
         XCTAssertTrue(list.waitForExistence(timeout: 5))
         XCTAssertEqual(list.cells.count, 0, "No notes should be visible for non-matching search")
+    }
+
+    // MARK: - SC-009: Unauthorized flow (no token)
+
+    func testSC009_noToken_showsErrorBanner() {
+        // App launched without jwtToken via -resetDefaults
+        // The error banner should appear after failed load
+        let banner = errorBanner
+        XCTAssertTrue(banner.waitForExistence(timeout: 10), "Error banner should appear when no JWT token is set")
+    }
+
+    // MARK: - SC-010: Authorized flow (with token)
+
+    func testSC010_withToken_loadCreateDeleteNotes() {
+        // This test requires a running backend at the configured API_BASE_URL.
+        // Token is set via launch environment; the app reads it from UserDefaults.
+        app.terminate()
+        app = XCUIApplication()
+        app.launchEnvironment["JWT_TOKEN"] = "test-e2e-token"
+        app.launch()
+
+        // Wait for notes to load (loading indicator should disappear)
+        let loadingIndicator = app.activityIndicators["loading_indicator"]
+        if loadingIndicator.waitForExistence(timeout: 3) {
+            // Wait for it to disappear
+            let disappeared = NSPredicate(format: "exists == false")
+            let expectation = XCTNSPredicateExpectation(predicate: disappeared, object: loadingIndicator)
+            let result = XCTWaiter().wait(for: [expectation], timeout: 10)
+            XCTAssertEqual(result, .completed, "Loading indicator should disappear after fetch")
+        }
+
+        // Create a note
+        addNote("E2E Test Note")
+        let createdNote = app.staticTexts["E2E Test Note"]
+        XCTAssertTrue(createdNote.waitForExistence(timeout: 10), "Created note should appear in the list")
+
+        // Delete the note
+        createdNote.swipeLeft()
+        let deleteButton = app.buttons["Delete"]
+        XCTAssertTrue(deleteButton.waitForExistence(timeout: 5), "Delete button should appear after swipe")
+        deleteButton.tap()
+
+        // Verify note is deleted
+        XCTAssertFalse(createdNote.waitForExistence(timeout: 5), "Deleted note should no longer exist")
     }
 }
