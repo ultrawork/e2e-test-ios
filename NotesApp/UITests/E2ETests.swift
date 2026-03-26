@@ -251,9 +251,29 @@ final class E2ETests: XCTestCase {
     // MARK: - SC-006: Clear search shows all notes
 
     func testSC006_clearSearchShowsAllNotes() {
+        // Relaunch with JWT token so API calls succeed
+        app.terminate()
+        app = XCUIApplication()
+        app.launchArguments += ["-resetDefaults"]
+        app.launchEnvironment["JWT_TOKEN"] = "test-e2e-token"
+        app.launchEnvironment["API_BASE_URL"] = "http://localhost:4001"
+        app.launch()
+
+        // Wait for initial load to complete
+        let loadingIndicator = app.activityIndicators["loading_indicator"]
+        if loadingIndicator.waitForExistence(timeout: 3) {
+            let disappeared = NSPredicate(format: "exists == false")
+            let expectation = XCTNSPredicateExpectation(predicate: disappeared, object: loadingIndicator)
+            _ = XCTWaiter().wait(for: [expectation], timeout: 10)
+        }
+
         // Add notes
         addNote("Заметка A")
+        let noteA = app.staticTexts["Заметка A"]
+        XCTAssertTrue(noteA.waitForExistence(timeout: 10), "Note A should appear")
         addNote("Заметка B")
+        let noteB = app.staticTexts["Заметка B"]
+        XCTAssertTrue(noteB.waitForExistence(timeout: 10), "Note B should appear")
 
         assertCounterEquals("Всего заметок: 2")
 
