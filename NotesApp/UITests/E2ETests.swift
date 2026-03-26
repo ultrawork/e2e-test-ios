@@ -5,12 +5,12 @@ final class E2ETests: XCTestCase {
     private var app: XCUIApplication!
 
     /// A valid JWT signed with the E2E test secret.
-    private let validJWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlMmUtdGVzdC11c2VyIiwidXNlcklkIjoiZTJlLXRlc3QtdXNlciIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.lPBIxRCcx4G4lRWbyEd35UkcFTxDbNV676O9pSJlcRI"
+    private let validJWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlMmUtdGVzdC11c2VyIiwidXNlcklkIjoiZTJlLXRlc3QtdXNlciIsImVtYWlsIjoiZTJlQHRlc3QuY29tIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjIwMDAwMDAwMDB9.3YBefsYQkZwTgByP1lEhBzGLSQpNNynEniredFblMRA"
 
     private var apiBaseURL: String {
         ProcessInfo.processInfo.environment["API_URL"]
             ?? ProcessInfo.processInfo.environment["API_BASE_URL"]
-            ?? "http://localhost:4001"
+            ?? "http://localhost:3000"
     }
 
     override func setUpWithError() throws {

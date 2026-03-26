@@ -20,6 +20,7 @@
 		/* UI Tests */
 		D1E2F3001F68108700A75B9A /* E2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3FE1F68108700A75B9A; };
 		D1E2F3011F68108700A75B9A /* SearchE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3FF1F68108700A75B9A; };
+		E1F2A3021F68108700A75B9A /* AuthE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3011F68108700A75B9A; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		/* UI Test refs */
 		D1E2F3FE1F68108700A75B9A /* E2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2ETests.swift; sourceTree = "<group>"; };
 		D1E2F3FF1F68108700A75B9A /* SearchE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchE2ETests.swift; sourceTree = "<group>"; };
+		E1F2A3011F68108700A75B9A /* AuthE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthE2ETests.swift; sourceTree = "<group>"; };
 		D1E2F3031F68108700A75B9A /* NotesAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotesAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -78,6 +80,7 @@
 			children = (
 				D1E2F3FE1F68108700A75B9A,
 				D1E2F3FF1F68108700A75B9A,
+				E1F2A3011F68108700A75B9A,
 			);
 			path = UITests;
 			sourceTree = "<group>";
@@ -210,6 +213,7 @@
 			files = (
 				D1E2F3001F68108700A75B9A,
 				D1E2F3011F68108700A75B9A,
+				E1F2A3021F68108700A75B9A,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
