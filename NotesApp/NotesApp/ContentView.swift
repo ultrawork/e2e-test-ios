@@ -25,6 +25,17 @@ struct ContentView: View {
                 )
                 .padding(.vertical, 8)
 
+                if viewModel.isLoading {
+                    ProgressView()
+                        .padding()
+                }
+
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .padding()
+                }
+
                 List {
                     ForEach(filteredNotes) { note in
                         Text(note.text)
@@ -69,6 +80,9 @@ struct ContentView: View {
                 text: $searchText,
                 prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
             )
+            .task {
+                await viewModel.fetchNotes()
+            }
         }
     }
 }
