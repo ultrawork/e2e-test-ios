@@ -20,7 +20,7 @@ final class APIE2ETests: XCTestCase {
         app = nil
     }
 
-    // MARK: - Helpers
+    // MARK: - Element Helpers
 
     private var notesList: XCUIElement {
         app.collectionViews["notes_list"]
