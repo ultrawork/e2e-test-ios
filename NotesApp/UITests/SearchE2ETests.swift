@@ -60,6 +60,9 @@ final class SearchE2ETests: XCTestCase {
     // MARK: - SC-008: Case-insensitive search
 
     func testSC008_searchIsCaseInsensitive() {
+        // Wait for initial fetchNotes to complete before adding notes
+        assertCounterEquals("Всего заметок: 0")
+
         // Add a note with mixed case
         addNote("Важная Заметка")
 
