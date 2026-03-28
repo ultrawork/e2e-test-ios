@@ -10,16 +10,11 @@ final class E2ETests: XCTestCase {
 
         // Forward BASE_URL and DEV_TOKEN from the test runner environment
         // so the app's APIService can reach the backend.
+        // Default to port 4000 to match the allocated app port.
         var env: [String: String] = [:]
-        if let baseURL = ProcessInfo.processInfo.environment["BASE_URL"] {
-            env["BASE_URL"] = baseURL
-        }
-        if let devToken = ProcessInfo.processInfo.environment["DEV_TOKEN"] {
-            env["DEV_TOKEN"] = devToken
-        }
-        if !env.isEmpty {
-            app.launchEnvironment = env
-        }
+        env["BASE_URL"] = ProcessInfo.processInfo.environment["BASE_URL"] ?? "http://localhost:4000"
+        env["DEV_TOKEN"] = ProcessInfo.processInfo.environment["DEV_TOKEN"] ?? ""
+        app.launchEnvironment = env
 
         app.launch()
     }
@@ -179,10 +174,15 @@ final class E2ETests: XCTestCase {
     // MARK: - SC-005: Search filters notes by title
 
     func testSC005_searchFiltersNotes() {
-        // Add notes
+        // Add notes and wait for each to appear (API calls are async)
         addNote("Покупки")
+        XCTAssertTrue(app.staticTexts["Покупки"].waitForExistence(timeout: 10), "First note should appear")
+
         addNote("Работа")
+        XCTAssertTrue(app.staticTexts["Работа"].waitForExistence(timeout: 10), "Second note should appear")
+
         addNote("Покупки на выходные")
+        XCTAssertTrue(app.staticTexts["Покупки на выходные"].waitForExistence(timeout: 10), "Third note should appear")
 
         // Verify all 3 notes present
         assertCounterEquals("Всего заметок: 3")

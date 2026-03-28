@@ -26,7 +26,7 @@ final class APIService: APIServiceProtocol {
         let info = Bundle.main.infoDictionary
         self.baseURL = ProcessInfo.processInfo.environment["BASE_URL"]
             ?? (info?["BASE_URL"] as? String)
-            ?? "http://localhost:3000"
+            ?? "http://localhost:4000"
         self.token = ProcessInfo.processInfo.environment["DEV_TOKEN"]
             ?? (info?["DEV_TOKEN"] as? String)
             ?? ""
