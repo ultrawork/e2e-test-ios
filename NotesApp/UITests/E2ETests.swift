@@ -7,6 +7,20 @@ final class E2ETests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
+
+        // Forward BASE_URL and DEV_TOKEN from the test runner environment
+        // so the app's APIService can reach the backend.
+        var env: [String: String] = [:]
+        if let baseURL = ProcessInfo.processInfo.environment["BASE_URL"] {
+            env["BASE_URL"] = baseURL
+        }
+        if let devToken = ProcessInfo.processInfo.environment["DEV_TOKEN"] {
+            env["DEV_TOKEN"] = devToken
+        }
+        if !env.isEmpty {
+            app.launchEnvironment = env
+        }
+
         app.launch()
     }
 
