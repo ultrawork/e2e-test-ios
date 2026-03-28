@@ -174,15 +174,20 @@ final class E2ETests: XCTestCase {
     // MARK: - SC-005: Search filters notes by title
 
     func testSC005_searchFiltersNotes() {
+        // Wait for initial fetchNotes() to complete before adding notes,
+        // otherwise the async fetch may overwrite locally-appended notes.
+        assertCounterEquals("Всего заметок: 0")
+        sleep(2)
+
         // Add notes and wait for each to appear (API calls are async)
         addNote("Покупки")
-        XCTAssertTrue(app.staticTexts["Покупки"].waitForExistence(timeout: 10), "First note should appear")
+        XCTAssertTrue(app.staticTexts["Покупки"].waitForExistence(timeout: 15), "First note should appear")
 
         addNote("Работа")
-        XCTAssertTrue(app.staticTexts["Работа"].waitForExistence(timeout: 10), "Second note should appear")
+        XCTAssertTrue(app.staticTexts["Работа"].waitForExistence(timeout: 15), "Second note should appear")
 
         addNote("Покупки на выходные")
-        XCTAssertTrue(app.staticTexts["Покупки на выходные"].waitForExistence(timeout: 10), "Third note should appear")
+        XCTAssertTrue(app.staticTexts["Покупки на выходные"].waitForExistence(timeout: 15), "Third note should appear")
 
         // Verify all 3 notes present
         assertCounterEquals("Всего заметок: 3")

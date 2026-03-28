@@ -23,13 +23,15 @@ final class APIService: APIServiceProtocol {
     private let decoder: JSONDecoder
 
     init() {
+        let env = ProcessInfo.processInfo.environment
         let info = Bundle.main.infoDictionary
-        self.baseURL = ProcessInfo.processInfo.environment["BASE_URL"]
+        self.baseURL = env["BASE_URL"]
             ?? (info?["BASE_URL"] as? String)
             ?? "http://localhost:4000"
-        self.token = ProcessInfo.processInfo.environment["DEV_TOKEN"]
+        let rawToken = env["DEV_TOKEN"]
             ?? (info?["DEV_TOKEN"] as? String)
-            ?? ""
+            ?? "dev_token_placeholder"
+        self.token = rawToken.isEmpty ? "dev_token_placeholder" : rawToken
         self.session = URLSession.shared
         self.decoder = JSONDecoder()
     }
