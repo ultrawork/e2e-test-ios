@@ -7,6 +7,14 @@ final class SearchE2ETests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
+
+        // Forward BASE_URL and DEV_TOKEN from the test runner environment
+        // so the app's APIService can reach the backend.
+        var env: [String: String] = [:]
+        env["BASE_URL"] = ProcessInfo.processInfo.environment["BASE_URL"] ?? "http://localhost:4000"
+        env["DEV_TOKEN"] = ProcessInfo.processInfo.environment["DEV_TOKEN"] ?? ""
+        app.launchEnvironment = env
+
         app.launch()
     }
 
@@ -52,8 +60,15 @@ final class SearchE2ETests: XCTestCase {
     // MARK: - SC-008: Case-insensitive search
 
     func testSC008_searchIsCaseInsensitive() {
+        // Wait for initial fetchNotes to complete before adding notes
+        assertCounterEquals("Всего заметок: 0")
+
         // Add a note with mixed case
         addNote("Важная Заметка")
+
+        // Wait for note to appear after API call completes
+        let addedNote = app.staticTexts["Важная Заметка"]
+        XCTAssertTrue(addedNote.waitForExistence(timeout: 10), "Added note should appear in the list")
 
         // Verify initial state
         assertCounterEquals("Всего заметок: 1")

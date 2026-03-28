@@ -7,6 +7,15 @@ final class E2ETests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
+
+        // Forward BASE_URL and DEV_TOKEN from the test runner environment
+        // so the app's APIService can reach the backend.
+        // Default to port 4000 to match the allocated app port.
+        var env: [String: String] = [:]
+        env["BASE_URL"] = ProcessInfo.processInfo.environment["BASE_URL"] ?? "http://localhost:4000"
+        env["DEV_TOKEN"] = ProcessInfo.processInfo.environment["DEV_TOKEN"] ?? "dev_token_placeholder"
+        app.launchEnvironment = env
+
         app.launch()
     }
 
@@ -165,10 +174,20 @@ final class E2ETests: XCTestCase {
     // MARK: - SC-005: Search filters notes by title
 
     func testSC005_searchFiltersNotes() {
-        // Add notes
+        // Wait for initial fetchNotes() to complete before adding notes,
+        // otherwise the async fetch may overwrite locally-appended notes.
+        assertCounterEquals("Всего заметок: 0")
+        sleep(2)
+
+        // Add notes and wait for each to appear (API calls are async)
         addNote("Покупки")
+        XCTAssertTrue(app.staticTexts["Покупки"].waitForExistence(timeout: 15), "First note should appear")
+
         addNote("Работа")
+        XCTAssertTrue(app.staticTexts["Работа"].waitForExistence(timeout: 15), "Second note should appear")
+
         addNote("Покупки на выходные")
+        XCTAssertTrue(app.staticTexts["Покупки на выходные"].waitForExistence(timeout: 15), "Third note should appear")
 
         // Verify all 3 notes present
         assertCounterEquals("Всего заметок: 3")
@@ -191,9 +210,17 @@ final class E2ETests: XCTestCase {
     // MARK: - SC-006: Clear search shows all notes
 
     func testSC006_clearSearchShowsAllNotes() {
-        // Add notes
+        // Wait for initial fetchNotes() to complete before adding notes,
+        // otherwise the async fetch may overwrite locally-appended notes.
+        assertCounterEquals("Всего заметок: 0")
+        sleep(2)
+
+        // Add notes and wait for each to appear (API calls are async)
         addNote("Заметка A")
+        XCTAssertTrue(app.staticTexts["Заметка A"].waitForExistence(timeout: 15), "First note should appear")
+
         addNote("Заметка B")
+        XCTAssertTrue(app.staticTexts["Заметка B"].waitForExistence(timeout: 15), "Second note should appear")
 
         assertCounterEquals("Всего заметок: 2")
 
@@ -252,9 +279,17 @@ final class E2ETests: XCTestCase {
     // MARK: - SC-007: Search with no results
 
     func testSC007_searchNoResults() {
-        // Add notes
+        // Wait for initial fetchNotes() to complete before adding notes,
+        // otherwise the async fetch may overwrite locally-appended notes.
+        assertCounterEquals("Всего заметок: 0")
+        sleep(2)
+
+        // Add notes and wait for each to appear (API calls are async)
         addNote("Молоко")
+        XCTAssertTrue(app.staticTexts["Молоко"].waitForExistence(timeout: 15), "First note should appear")
+
         addNote("Хлеб")
+        XCTAssertTrue(app.staticTexts["Хлеб"].waitForExistence(timeout: 15), "Second note should appear")
 
         assertCounterEquals("Всего заметок: 2")
 
