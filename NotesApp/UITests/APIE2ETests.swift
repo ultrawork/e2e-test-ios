@@ -54,7 +54,7 @@ final class APIE2ETests: XCTestCase {
     // MARK: - SC-IOS-06: GET /api/notes returns correct JSON array
 
     func testSC_IOS_06_getNotesReturnsJSONArray() throws {
-        let token = ProcessInfo.processInfo.environment["DEV_TOKEN"] ?? ""
+        let token = ProcessInfo.processInfo.environment["DEV_TOKEN"] ?? "dev_token_placeholder"
         let (data, response) = try performRequest(
             path: "/api/notes",
             headers: ["Authorization": "Bearer \(token)"]
