@@ -13,7 +13,7 @@ final class E2ETests: XCTestCase {
         // Default to port 4000 to match the allocated app port.
         var env: [String: String] = [:]
         env["BASE_URL"] = ProcessInfo.processInfo.environment["BASE_URL"] ?? "http://localhost:4000"
-        env["DEV_TOKEN"] = ProcessInfo.processInfo.environment["DEV_TOKEN"] ?? ""
+        env["DEV_TOKEN"] = ProcessInfo.processInfo.environment["DEV_TOKEN"] ?? "dev_token_placeholder"
         app.launchEnvironment = env
 
         app.launch()
