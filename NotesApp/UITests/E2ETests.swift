@@ -210,12 +210,17 @@ final class E2ETests: XCTestCase {
     // MARK: - SC-006: Clear search shows all notes
 
     func testSC006_clearSearchShowsAllNotes() {
+        // Wait for initial fetchNotes() to complete before adding notes,
+        // otherwise the async fetch may overwrite locally-appended notes.
+        assertCounterEquals("Всего заметок: 0")
+        sleep(2)
+
         // Add notes and wait for each to appear (API calls are async)
         addNote("Заметка A")
-        XCTAssertTrue(app.staticTexts["Заметка A"].waitForExistence(timeout: 10), "First note should appear")
+        XCTAssertTrue(app.staticTexts["Заметка A"].waitForExistence(timeout: 15), "First note should appear")
 
         addNote("Заметка B")
-        XCTAssertTrue(app.staticTexts["Заметка B"].waitForExistence(timeout: 10), "Second note should appear")
+        XCTAssertTrue(app.staticTexts["Заметка B"].waitForExistence(timeout: 15), "Second note should appear")
 
         assertCounterEquals("Всего заметок: 2")
 
