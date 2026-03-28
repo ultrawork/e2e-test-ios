@@ -10,6 +10,11 @@
     <string>1</string>
     <key>CFBundleShortVersionString</key>
     <string>1.0</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
     <key>BASE_URL</key>
     <string>http://localhost:4000</string>
     <key>DEV_TOKEN</key>
