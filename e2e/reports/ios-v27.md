@@ -3,7 +3,7 @@
 **Дата:** 2026-03-29
 **Версия:** v27
 **Платформа:** iOS (SwiftUI)
-**PR:** _будет обновлено после создания PR_
+**PR:** https://github.com/ultrawork/e2e-test-ios/pull/30
 
 ---
 
