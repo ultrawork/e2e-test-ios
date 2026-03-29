@@ -101,6 +101,15 @@ xcrun simctl spawn booted defaults read com.ultrawork.notes token
 xcrun simctl spawn booted defaults delete com.ultrawork.notes token
 ```
 
+### Запуск тестов
+
+```bash
+xcodebuild -project NotesApp/NotesApp.xcodeproj \
+  -scheme NotesApp \
+  -destination 'platform=iOS Simulator,name=iPhone 14' \
+  test
+```
+
 ### Сценарии и отчёт
 
 - Сценарии (5 шт.): [e2e/scenarios/ios-notes-v28.md](e2e/scenarios/ios-notes-v28.md)
