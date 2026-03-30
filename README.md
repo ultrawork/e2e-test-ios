@@ -114,3 +114,18 @@ xcodebuild -project NotesApp/NotesApp.xcodeproj \
 
 - Сценарии (5 шт.): [e2e/scenarios/ios-notes-v28.md](e2e/scenarios/ios-notes-v28.md)
 - Отчёт (PASS 5/5): [e2e/reports/ios-v28.md](e2e/reports/ios-v28.md)
+
+## E2E v29
+
+- Сценарии: [e2e/scenarios/ios-notes-v29.md](e2e/scenarios/ios-notes-v29.md)
+- Отчёт: [e2e/reports/ios-v29.md](e2e/reports/ios-v29.md)
+
+### Запуск тестов
+
+```bash
+xcodebuild test \
+  -project NotesApp/NotesApp.xcodeproj \
+  -scheme NotesApp \
+  -destination 'platform=iOS Simulator,name=iPhone 14' \
+  2>&1 | grep -E "(Test Suite|Test Case|PASS|FAIL|error:)" | tail -30
+```
