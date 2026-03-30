@@ -1,6 +1,6 @@
 import XCTest
 
-final class APIServiceV27E2ETests: XCTestCase {
+final class APIServiceE2ETests: XCTestCase {
 
     private var app: XCUIApplication!
 
@@ -48,12 +48,19 @@ final class APIServiceV27E2ETests: XCTestCase {
         XCTAssertEqual(counter.label, expected, file: file, line: line)
     }
 
-    // MARK: - v27 SC-1: Launch without token — empty list, authorization error
+    private func takeScreenshot(name: String) {
+        let screenshot = XCUIScreen.main.screenshot()
+        let attachment = XCTAttachment(screenshot: screenshot)
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
 
-    func testV27_SC01_launchWithoutToken_emptyListAndError() throws {
+    // MARK: - SC-1: Launch without token — empty list, authorization error
+
+    func testSC01_launchWithoutToken_emptyListAndError() throws {
         // Launch app without any token configured
         // Simulates: no token in UserDefaults → API returns 401
-        // Expected: empty notes list, error message displayed
         app.launchArguments += ["-noToken", "1"]
         app.launch()
 
@@ -77,11 +84,13 @@ final class APIServiceV27E2ETests: XCTestCase {
 
         let button = addNoteButton
         XCTAssertTrue(button.waitForExistence(timeout: 5), "Add button should be present")
+
+        takeScreenshot(name: "SC-01-launch-without-token")
     }
 
-    // MARK: - v27 SC-2: Load notes with dev-token (GET /api/notes)
+    // MARK: - SC-2: Load notes with dev-token (GET /api/notes)
 
-    func testV27_SC02_loadNotesWithDevToken_notesDisplayed() throws {
+    func testSC02_loadNotesWithDevToken_notesDisplayed() throws {
         // Launch app with token configured
         // Simulates: valid dev-token in UserDefaults → API returns notes
         app.launchArguments += ["-hasToken", "1"]
@@ -95,21 +104,20 @@ final class APIServiceV27E2ETests: XCTestCase {
         let counter = notesCounter
         XCTAssertTrue(counter.waitForExistence(timeout: 5), "Counter should be visible")
 
-        // Simulate loaded state: add a test note to verify data flow
-        // This verifies the ViewModel → View binding works correctly
-        addNote("Test note from E2E v27")
+        // Add a test note to verify data flow through ViewModel → View
+        addNote("Test note from E2E v28")
 
         // Verify note appears in the list (content → text mapping)
-        let testNote = app.staticTexts["Test note from E2E v27"]
+        let testNote = app.staticTexts["Test note from E2E v28"]
         XCTAssertTrue(testNote.waitForExistence(timeout: 5), "Added note should be visible in the list")
 
         // Verify counter updated
         assertCounterEquals("Всего заметок: 1")
 
         // Add second note to verify multiple notes display
-        addNote("Second v27 test note")
+        addNote("Second v28 test note")
 
-        let secondNote = app.staticTexts["Second v27 test note"]
+        let secondNote = app.staticTexts["Second v28 test note"]
         XCTAssertTrue(secondNote.waitForExistence(timeout: 5), "Second note should be visible")
 
         // Verify counter reflects all notes
@@ -117,11 +125,13 @@ final class APIServiceV27E2ETests: XCTestCase {
 
         // Verify list has correct number of cells
         XCTAssertEqual(list.cells.count, 2, "List should contain 2 notes")
+
+        takeScreenshot(name: "SC-02-load-notes-with-token")
     }
 
-    // MARK: - v27 SC-3: Handle 401 with invalid token
+    // MARK: - SC-3: Handle 401 with invalid token
 
-    func testV27_SC03_invalidToken_unauthorizedError() throws {
+    func testSC03_invalidToken_unauthorizedError() throws {
         // Launch app with invalid token
         // Simulates: invalid JWT in UserDefaults → API returns 401 Unauthorized
         app.launchArguments += ["-invalidToken", "1"]
@@ -145,5 +155,7 @@ final class APIServiceV27E2ETests: XCTestCase {
 
         let button = addNoteButton
         XCTAssertTrue(button.waitForExistence(timeout: 5), "Add button should still be accessible")
+
+        takeScreenshot(name: "SC-03-invalid-token-unauthorized")
     }
 }
