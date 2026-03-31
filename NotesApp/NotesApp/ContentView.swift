@@ -40,6 +40,17 @@ struct ContentView: View {
                 .listStyle(.plain)
                 .scrollDismissesKeyboard(.interactively)
                 .accessibilityIdentifier("notes_list")
+                .refreshable {
+                    await viewModel.fetchNotes()
+                }
+
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .padding(.horizontal)
+                        .accessibilityIdentifier("error_message")
+                }
 
                 HStack {
                     TextField(NSLocalizedString("notes_new_note_placeholder", comment: "New note placeholder"), text: $newNoteText)
@@ -69,6 +80,9 @@ struct ContentView: View {
                 text: $searchText,
                 prompt: NSLocalizedString("search_notes_placeholder", comment: "Search notes placeholder")
             )
+            .task {
+                await viewModel.fetchNotes()
+            }
         }
     }
 }
