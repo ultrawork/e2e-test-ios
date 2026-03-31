@@ -94,7 +94,7 @@ final class APIService {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
-        let body = ["content": content]
+        let body = ["title": content, "content": content]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
         let (data, response): (Data, URLResponse)
