@@ -23,6 +23,10 @@ final class APIServiceE2ETests: XCTestCase {
         app.staticTexts["notes_counter_text"]
     }
 
+    private var errorMessage: XCUIElement {
+        app.staticTexts["error_message"]
+    }
+
     private var newNoteTextField: XCUIElement {
         app.textFields["new_note_text_field"]
     }
