@@ -31,9 +31,17 @@ final class APIService {
     let baseURL: String
 
     init() {
-        self.baseURL = ProcessInfo.processInfo.environment["BASE_URL"]
+        let raw = ProcessInfo.processInfo.environment["BACKEND_BASE_URL"]
+            ?? ProcessInfo.processInfo.environment["BASE_URL"]
+            ?? Bundle.main.infoDictionary?["BACKEND_BASE_URL"] as? String
             ?? Bundle.main.infoDictionary?["BASE_URL"] as? String
             ?? "http://localhost:4000/api"
+        // Normalize: strip trailing slash
+        if raw.hasSuffix("/") {
+            self.baseURL = String(raw.dropLast())
+        } else {
+            self.baseURL = raw
+        }
     }
 
     /// Read the dev-token from UserDefaults
@@ -41,18 +49,40 @@ final class APIService {
         UserDefaults.standard.string(forKey: "token")
     }
 
-    /// Fetch all notes from the backend
-    func fetchNotes() async throws -> [Note] {
-        guard let url = URL(string: "\(baseURL)/notes") else {
+    /// Build a URLRequest with common headers
+    private func makeRequest(path: String, method: String, body: Data? = nil) throws -> URLRequest {
+        guard let url = URL(string: "\(baseURL)\(path)") else {
             throw APIError.invalidURL
         }
-
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-
+        request.httpMethod = method
         if let token = token {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
+        if let body = body {
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = body
+        }
+        return request
+    }
+
+    /// Validate HTTP response status, throwing appropriate APIError
+    private func validateResponse(_ response: URLResponse) throws -> HTTPURLResponse {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.networkError(URLError(.badServerResponse))
+        }
+        if httpResponse.statusCode == 401 {
+            throw APIError.unauthorized
+        }
+        guard (200...299).contains(httpResponse.statusCode) else {
+            throw APIError.serverError(httpResponse.statusCode)
+        }
+        return httpResponse
+    }
+
+    /// Fetch all notes from the backend
+    func fetchNotes() async throws -> [Note] {
+        let request = try makeRequest(path: "/notes", method: "GET")
 
         let (data, response): (Data, URLResponse)
         do {
@@ -61,17 +91,7 @@ final class APIService {
             throw APIError.networkError(error)
         }
 
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.networkError(URLError(.badServerResponse))
-        }
-
-        if httpResponse.statusCode == 401 {
-            throw APIError.unauthorized
-        }
-
-        guard (200...299).contains(httpResponse.statusCode) else {
-            throw APIError.serverError(httpResponse.statusCode)
-        }
+        _ = try validateResponse(response)
 
         do {
             return try JSONDecoder().decode([Note].self, from: data)
@@ -80,22 +100,10 @@ final class APIService {
         }
     }
 
-    /// Create a new note via POST /api/notes
+    /// Create a new note via POST /notes
     func createNote(content: String) async throws -> Note {
-        guard let url = URL(string: "\(baseURL)/notes") else {
-            throw APIError.invalidURL
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        if let token = token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        let body = ["content": content]
-        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        let body = try JSONSerialization.data(withJSONObject: ["content": content])
+        let request = try makeRequest(path: "/notes", method: "POST", body: body)
 
         let (data, response): (Data, URLResponse)
         do {
@@ -104,22 +112,26 @@ final class APIService {
             throw APIError.networkError(error)
         }
 
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.networkError(URLError(.badServerResponse))
-        }
-
-        if httpResponse.statusCode == 401 {
-            throw APIError.unauthorized
-        }
-
-        guard (200...299).contains(httpResponse.statusCode) else {
-            throw APIError.serverError(httpResponse.statusCode)
-        }
+        _ = try validateResponse(response)
 
         do {
             return try JSONDecoder().decode(Note.self, from: data)
         } catch {
             throw APIError.decodingError(error)
         }
+    }
+
+    /// Delete a note via DELETE /notes/:id
+    func deleteNote(id: String) async throws {
+        let request = try makeRequest(path: "/notes/\(id)", method: "DELETE")
+
+        let (_, response): (Data, URLResponse)
+        do {
+            (_, response) = try await URLSession.shared.data(for: request)
+        } catch {
+            throw APIError.networkError(error)
+        }
+
+        _ = try validateResponse(response)
     }
 }
