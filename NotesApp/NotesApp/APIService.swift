@@ -94,7 +94,7 @@ final class APIService {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
-        let body = ["content": content]
+        let body = ["title": content, "content": content]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
         let (data, response): (Data, URLResponse)
@@ -120,6 +120,39 @@ final class APIService {
             return try JSONDecoder().decode(Note.self, from: data)
         } catch {
             throw APIError.decodingError(error)
+        }
+    }
+
+    /// Delete a note via DELETE /api/notes/:id
+    func deleteNote(id: String) async throws {
+        guard let url = URL(string: "\(baseURL)/notes/\(id)") else {
+            throw APIError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+
+        if let token = token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        let (_, response): (Data, URLResponse)
+        do {
+            (_, response) = try await URLSession.shared.data(for: request)
+        } catch {
+            throw APIError.networkError(error)
+        }
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.networkError(URLError(.badServerResponse))
+        }
+
+        if httpResponse.statusCode == 401 {
+            throw APIError.unauthorized
+        }
+
+        guard (200...299).contains(httpResponse.statusCode) else {
+            throw APIError.serverError(httpResponse.statusCode)
         }
     }
 }
